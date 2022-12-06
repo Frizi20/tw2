@@ -28,11 +28,17 @@ class SurveyBuilder extends Model
         'created_at',
         'updated_at',
         'deleted_at',
+        'dimensiune_id'
     ];
 
     public function departamente()
     {
         return $this->belongsTo(Departamente::class, 'departamente_id');
+    }
+
+    public function dimensiuni()
+    {
+        return $this->belongsTo(Dimensiune::class, 'dimensiune_id');
     }
 
     public function categorie_de_control()

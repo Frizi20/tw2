@@ -33,6 +33,11 @@ class Dimensiune extends Model
         return $this->belongsTo(Departamente::class, 'departament_id');
     }
 
+    public function categoriiDeControl()
+    {
+        return $this->hasMany(CategorieDeControl::class);
+    }
+
     protected function serializeDate(DateTimeInterface $date)
     {
         return $date->format('Y-m-d H:i:s');

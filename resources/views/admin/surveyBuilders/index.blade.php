@@ -29,13 +29,16 @@
                             {{ trans('cruds.surveyBuilder.fields.departamente') }}
                         </th>
                         <th>
+                            {{trans('cruds.surveyBuilder.fields.dimensiune')}}
+                        </th>
+                        <th>
+                            {{ trans('cruds.surveyBuilder.fields.categorie_de_control') }}
+                        </th>
+                        <th>
                             {{ trans('cruds.surveyBuilder.fields.schema') }}
                         </th>
                         <th>
                             {{ trans('cruds.surveyBuilder.fields.generala') }}
-                        </th>
-                        <th>
-                            {{ trans('cruds.surveyBuilder.fields.categorie_de_control') }}
                         </th>
                         <th>
                             &nbsp;
@@ -55,14 +58,17 @@
                                 {{ $surveyBuilder->departamente->nume ?? '' }}
                             </td>
                             <td>
+                                {{ json_encode($surveyBuilder->dimensiuni->dimensiune ?? '') }}
+                            </td>
+                            <td>
+                                {{ $surveyBuilder->categorie_de_control->nume ?? '' }}
+                            </td>
+                            <td>
                                 {{ $surveyBuilder->schema ?? '' }}
                             </td>
                             <td>
                                 <span style="display:none">{{ $surveyBuilder->generala ?? '' }}</span>
                                 <input type="checkbox" disabled="disabled" {{ $surveyBuilder->generala ? 'checked' : '' }}>
-                            </td>
-                            <td>
-                                {{ $surveyBuilder->categorie_de_control->nume ?? '' }}
                             </td>
                             <td>
                                 @can('survey_builder_show')
@@ -143,7 +149,7 @@
       $($.fn.dataTable.tables(true)).DataTable()
           .columns.adjust();
   });
-  
+
 })
 
 </script>

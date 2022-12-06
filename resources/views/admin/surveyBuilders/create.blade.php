@@ -1,6 +1,11 @@
 @extends('layouts.admin')
 @section('content')
 
+@section('styles')
+@parent
+<link rel="stylesheet" href="{{ asset('css/surveyBuilder.css') }}">
+@endsection
+
 <div class="card">
     <div class="card-header">
         {{ trans('global.create') }} {{ trans('cruds.surveyBuilder.title_singular') }}
@@ -23,16 +28,7 @@
                 @endif
                 <span class="help-block">{{ trans('cruds.surveyBuilder.fields.departamente_helper') }}</span>
             </div>
-            {{-- <div class="form-group">
-                <label for="schema">{{ trans('cruds.surveyBuilder.fields.schema') }}</label>
-                <input class="form-control {{ $errors->has('schema') ? 'is-invalid' : '' }}" type="text" name="schema" id="schema" value="{{ old('schema', '') }}">
-                @if($errors->has('schema'))
-                    <div class="invalid-feedback">
-                        {{ $errors->first('schema') }}
-                    </div>
-                @endif
-                <span class="help-block">{{ trans('cruds.surveyBuilder.fields.schema_helper') }}</span>
-            </div> --}}
+
             <div class="form-group ">
                 <div class="form-check {{ $errors->has('generala') ? 'is-invalid' : '' }}">
                     <input type="hidden" name="generala" value="0">
@@ -49,7 +45,7 @@
 
             <div class="form-group dimensions">
                 <label class="required" for="dimensions">Dimensiune </label>
-                <select class="form-control select2 {{ $errors->has('dimension') ? 'is-invalid' : '' }}" name="dimensions" id="dimensions" required>
+                <select class="form-control select2 {{ $errors->has('dimension') ? 'is-invalid' : '' }}" name="dimensiune_id" id="dimensions" required>
                     {{-- @foreach($dimensions as $id => $entry)
                         <option value="{{ $id }}" {{ old('dimension') == $id ? 'selected' : '' }}>{{ $entry }}</option>
                     @endforeach --}}
@@ -75,6 +71,38 @@
                 @endif
                 <span class="help-block">{{ trans('cruds.surveyBuilder.fields.categorie_de_control_helper') }}</span>
             </div>
+
+            <div class="form-builder-wrapper">
+                <div class="form-builder-container">
+                    <div class="form-builder-header">
+                        <div class="form-field-label">
+                            Intrebari
+                        </div>
+                        <div class="add-form-field btn">
+                            <span>Add +</span>
+                        </div>
+                    </div>
+                    <div class="form-builder">
+
+                        <div class="update-form btn"></div>
+                    </div>
+                    <div class="save-schema btn">
+                        <span>Save</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="schema">{{ trans('cruds.surveyBuilder.fields.schema') }}</label>
+                <input class="form-control {{ $errors->has('schema') ? 'is-invalid' : '' }}" type="text" name="schema" id="schema" value="{{ old('schema', '') }}">
+                @if($errors->has('schema'))
+                    <div class="invalid-feedback">
+                        {{ $errors->first('schema') }}
+                    </div>
+                @endif
+                <span class="help-block">{{ trans('cruds.surveyBuilder.fields.schema_helper') }}</span>
+            </div>
+
             <div class="form-group">
                 <button class="btn btn-danger" type="submit">
                     {{ trans('global.save') }}
@@ -83,6 +111,7 @@
         </form>
     </div>
 </div>
+
 
 <script src="{{ asset('js/surveyBuilder.js') }}"></script>
 
@@ -102,7 +131,7 @@
 
     departamentSelect.on('change',function(){
         const depId = $(this).val()
-        
+
         //empty dimension select options
         dimensionSelect.empty().trigger("change")
 
@@ -124,7 +153,7 @@
 
 
         try {
-            
+
             const response = await fetch('/admin/survey-builders/get-dimensions', {
                 method: 'POST',
                 headers: {
