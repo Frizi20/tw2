@@ -36,6 +36,7 @@ class Departamente extends Model
         return $this->hasMany(Dimensiune::class,'departament_id');
     }
 
+
     public function created_by()
     {
         return $this->belongsTo(User::class, 'created_by_id');

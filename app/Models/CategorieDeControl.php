@@ -27,12 +27,25 @@ class CategorieDeControl extends Model
         'deleted_at',
     ];
 
-    public function surveyBuilder()
+    // public function surveyBuilder()
+    // {
+    //     return $this->hasOne(SurveyBuilder::class, 'categorie_de_control_id');
+    // }
+
+    public function dimensions()
     {
-        return $this->hasOne(SurveyBuilder::class,'categorie_de_control_id');
+        return $this->belongsToMany(Dimensiune::class, 'survey_builders', 'categorie_de_control_id', 'dimensiune_id');
     }
 
-    
+    public function departamente()
+    {
+        return $this->belongsToMany(Departamente::class, 'survey_builders', 'categorie_de_control_id');
+    }
+
+    public function surveyBuilder()
+    {
+        return $this->hasMany(SurveyBuilder::class, 'categorie_de_control_id','id');
+    }
 
     protected function serializeDate(DateTimeInterface $date)
     {

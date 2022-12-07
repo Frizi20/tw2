@@ -33,9 +33,15 @@ class Dimensiune extends Model
         return $this->belongsTo(Departamente::class, 'departament_id');
     }
 
+    // > Departamente::find(3)->dimensions[0]->categoriiDeControl
     public function categoriiDeControl()
     {
-        return $this->hasMany(CategorieDeControl::class);
+        return $this->belongsToMany(CategorieDeControl::class,'survey_builders','dimensiune_id','categorie_de_control_id');
+    }
+
+    public function withoutCatogoriiDeControl()
+    {
+        return $this->belongsToMany(CategorieDeControl::class,'survey_builders','dimensiune_id','categorie_de_control_id');
     }
 
     protected function serializeDate(DateTimeInterface $date)
