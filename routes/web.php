@@ -36,8 +36,12 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::resource('departamentes', 'DepartamenteController');
 
     // Survey Builder
+    Route::post('survey-builders/store-survey','SurveyBuilderController@storeSurvey')->name('survey-builders.storeSurvey');
+
+    Route::post('survey-builders/get-categories', 'SurveyBuilderController@getControllCategories')->name('survey-builders.getCategories');
+
     Route::post('survey-builders/get-dimensions', 'SurveyBuilderController@getDimensions')->name('survey-builders.getDimensions');
-    
+
     Route::delete('survey-builders/destroy', 'SurveyBuilderController@massDestroy')->name('survey-builders.massDestroy');
     Route::resource('survey-builders', 'SurveyBuilderController');
 

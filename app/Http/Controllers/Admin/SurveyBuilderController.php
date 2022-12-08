@@ -20,12 +20,15 @@ class SurveyBuilderController extends Controller
     {
         abort_if(Gate::denies('survey_builder_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $surveyBuilders = SurveyBuilder::with(['departamente', 'categorie_de_control','dimensiuni'])->get();
-
-
-
+        $surveyBuilders = SurveyBuilder::with(['departamente', 'categorie_de_control', 'dimensiuni'])->get();
 
         return view('admin.surveyBuilders.index', compact('surveyBuilders'));
+    }
+
+    public function storeSurvey(Request $request)
+    {
+
+        return response()->json($request);
     }
 
     public function getDimensions(Request $request)
@@ -34,16 +37,31 @@ class SurveyBuilderController extends Controller
 
         $departamente = Departamente::find($departamentId);
 
-        if(!$departamente) return response()->json('No departaments found',404);
+        if (!$departamente) return response()->json('No departaments found', 404);
 
-        $dimensions = $departamente->dimensions->pluck('dimensiune','id');
+        $dimensions = $departamente->dimensions->pluck('dimensiune', 'id');
 
         return response()->json($dimensions);
     }
+    // > Departamente::find(3)->dimensions[0]->categoriiDeControl->pluck('id')->all()
 
-    public function getControllCategories()
+
+
+    public function getControllCategories(Request $request)
     {
-        return response()->json(CategorieDeControl::all());
+
+        $departamenteId = $request->dep_id;
+        $dimensionId = $request->dim_id;
+
+
+        $departament = Departamente::find($departamenteId);
+        $dimensiune = $departament->dimensions->find($dimensionId);
+
+
+        $categoriesWithSurveys = $dimensiune->categoriiDeControl->pluck('id')->all();
+        $categoriesWithoutSurveys = CategorieDeControl::whereNotIn('id', $categoriesWithSurveys)->get()->pluck('nume', 'id');
+
+        return response()->json($categoriesWithoutSurveys);
     }
 
     public function create()
@@ -58,7 +76,7 @@ class SurveyBuilderController extends Controller
 
 
 
-        return view('admin.surveyBuilders.create', compact('categorie_de_controls', 'departamentes','dimensions'));
+        return view('admin.surveyBuilders.create', compact('categorie_de_controls', 'departamentes', 'dimensions'));
     }
 
     public function store(StoreSurveyBuilderRequest $request)

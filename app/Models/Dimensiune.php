@@ -36,7 +36,7 @@ class Dimensiune extends Model
     // > Departamente::find(3)->dimensions[0]->categoriiDeControl
     public function categoriiDeControl()
     {
-        return $this->belongsToMany(CategorieDeControl::class,'survey_builders','dimensiune_id','categorie_de_control_id');
+        return $this->belongsToMany(CategorieDeControl::class,'survey_builders','dimensiune_id','categorie_de_control_id')->whereNull('survey_builders.deleted_at');
     }
 
     public function withoutCatogoriiDeControl()
