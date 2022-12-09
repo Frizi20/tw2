@@ -12,6 +12,7 @@ use App\Models\User;
 use Gate;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Auth;
 
 class SurveyResultController extends Controller
 {
@@ -30,9 +31,10 @@ class SurveyResultController extends Controller
 
         $departaments = Departamente::pluck('nume', 'id')->prepend(trans('global.pleaseSelect'), '');
 
-        $users = User::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
+        $user =Auth::user()->name;
 
-        return view('admin.surveyResults.create', compact('departaments', 'users'));
+
+        return view('admin.surveyResults.create', compact('departaments', 'user'));
     }
 
     public function store(StoreSurveyResultRequest $request)

@@ -27,9 +27,15 @@ class SurveyBuilderController extends Controller
 
     public function storeSurvey(Request $request)
     {
-
-        return response()->json($request);
+        $createdSurvey = SurveyBuilder::create([
+            'schema'=>$request->schema,
+            'departamente_id'=>$request->dep_id,
+            'dimensiune_id'   =>$request->dim_id,
+            'categorie_de_control_id'=>$request->cat_id
+        ]);
+        return response()->json($createdSurvey);
     }
+
 
     public function getDimensions(Request $request)
     {
@@ -45,9 +51,33 @@ class SurveyBuilderController extends Controller
     }
     // > Departamente::find(3)->dimensions[0]->categoriiDeControl->pluck('id')->all()
 
+    public function getSurveyBuilder(Request $request)
+    {
+        $sb = SurveyBuilder::where([
+            ['dimensiune_id','=',$request->dim_id],
+            ['departamente_id','=',$request->dep_id],
+            ['categorie_de_control_id','=',$request->cat_id]
+        ])->get()[0];
 
+        return response()->json($sb);
+    }
 
     public function getControllCategories(Request $request)
+    {
+        $departamenteId = $request->dep_id;
+        $dimensionId = $request->dim_id;
+
+
+        $departament = Departamente::find($departamenteId);
+        $dimensiune = $departament->dimensions->find($dimensionId);
+
+
+        $categoriesWithSurveys = $dimensiune->categoriiDeControl->pluck('nume', 'id');
+
+        return response()->json($categoriesWithSurveys);
+    }
+
+    public function getAvailableControllCategories(Request $request)
     {
 
         $departamenteId = $request->dep_id;

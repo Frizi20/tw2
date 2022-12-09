@@ -1,196 +1,205 @@
+// (function(){
+// document.querySelector('.slider').innerHTML =  document.querySelectorAll('.slider fieldset')[0].outerHTML.repeat(10)
+// })();
 
-		// (function(){
-			// document.querySelector('.slider').innerHTML =  document.querySelectorAll('.slider fieldset')[0].outerHTML.repeat(10)
-		// })();
+const prevBtn = document.querySelector('.prev-btn')
+const nextBtn = document.querySelector('.next-btn')
+const questions = document.querySelectorAll('.slider fieldset')
+const slider = document.querySelector('.slider')
+const progressBar = document.querySelector('.progress-bar-indicator')
 
-		const prevBtn = document.querySelector('.prev-btn');
-		const nextBtn = document.querySelector('.next-btn');
-		const questions =  document.querySelectorAll('.slider fieldset')
-		const slider = document.querySelector('.slider')
-		const progressBar = document.querySelector('.progress-bar-indicator')
+let currQuestion = 0
+let questionNr
 
-		let currQuestion = 0
-		let questionNr
+const schema = {
+  fields: [
+    {
+      title:
+        'Există o relaţie de comunicare şi colaborare între dvs. si şefii ierarhici?',
+      fieldOrder: 1,
+      options: [
+        {
+          value: 2,
+          label: 'Da',
+        },
+        {
+          value: 3,
+          label: 'Partial',
+        },
+        {
+          value: 5,
+          label: 'NU',
+        },
+      ],
+    },
+    {
+      title:
+        'Ca şi angajat, cunoaşteţi care sunt rezultatele aşteptate de şefii dvs. în privinţa activităţii pe care o desfăşuraţi?',
+      fieldOrder: 2,
+      options: [
+        {
+          value: 2,
+          label: 'Da',
+        },
+        {
+          value: 3,
+          label: 'Partial',
+        },
+        {
+          value: 5,
+          label: 'NU',
+        },
+      ],
+    },
+    {
+      title:
+        'Vă simţiţi în siguranţă în ceea ce priveşte dotarea materială cu echipamente, unelte, aparatură, necesare desfăşurării activităţii dvs.? Sunteţi mulţumit?',
+      fieldOrder: 3,
+      options: [
+        {
+          value: 2,
+          label: 'Da',
+        },
+        {
+          value: 3,
+          label: 'Partial',
+        },
+        {
+          value: 5,
+          label: 'NU',
+        },
+      ],
+    },
+    {
+      title:
+        ' Consideraţi că la nivelul spitalului există o politică de promovare a angajaţilor?',
+      fieldOrder: 4,
+      options: [
+        {
+          value: 2,
+          label: 'Da',
+        },
+        {
+          value: 3,
+          label: 'Partial',
+        },
+        {
+          value: 5,
+          label: 'NU',
+        },
+      ],
+    },
+    {
+      title:
+        'Consideraţi că sunteţi suficient de bine informat cu privire la riscurile locului de munca?',
+      fieldOrder: 5,
+      options: [
+        {
+          value: 2,
+          label: 'Da',
+        },
+        {
+          value: 3,
+          label: 'Partial',
+        },
+        {
+          value: 5,
+          label: 'NU',
+        },
+      ],
+    },
+  ],
+}
 
+class SurveyBuilder {
+  fields
+  fieldsLocationDOM
+  nrQuestions
+  currQuestion = 0
+  currSelect
+  outputSchema = []
+  createdFieldsDOM = []
+  allowNext = true
+  sendSurveyCallback
 
-		const schema = {
-			fields:[
-				{
-					title:'Există o relaţie de comunicare şi colaborare între dvs. si şefii ierarhici?',
-					fieldOrder:1,
-					options: [
-						{
-							value:2,
-							label:'Da'
-						},
-						{
-							value:3,
-							label:'Partial'
-						},
-						{
-							value:5,
-							label:'NU'
-						}
-					]
-				},
-				{
-					title:'Ca şi angajat, cunoaşteţi care sunt rezultatele aşteptate de şefii dvs. în privinţa activităţii pe care o desfăşuraţi?',
-					fieldOrder:2,
-					options: [
-						{
-							value:2,
-							label:'Da'
-						},
-						{
-							value:3,
-							label:'Partial'
-						},
-						{
-							value:5,
-							label:'NU'
-						}
-					]
-				},
-				{
-					title:'Vă simţiţi în siguranţă în ceea ce priveşte dotarea materială cu echipamente, unelte, aparatură, necesare desfăşurării activităţii dvs.? Sunteţi mulţumit?',
-					fieldOrder:3,
-					options: [
-						{
-							value:2,
-							label:'Da'
-						},
-						{
-							value:3,
-							label:'Partial'
-						},
-						{
-							value:5,
-							label:'NU'
-						}
-					]
-				},
-				{
-					title:' Consideraţi că la nivelul spitalului există o politică de promovare a angajaţilor?',
-					fieldOrder:4,
-					options: [
-						{
-							value:2,
-							label:'Da'
-						},
-						{
-							value:3,
-							label:'Partial'
-						},
-						{
-							value:5,
-							label:'NU'
-						}
-					]
-				},
-				{
-					title:'Consideraţi că sunteţi suficient de bine informat cu privire la riscurile locului de munca?',
-					fieldOrder:5,
-					options: [
-						{
-							value:2,
-							label:'Da'
-						},
-						{
-							value:3,
-							label:'Partial'
-						},
-						{
-							value:5,
-							label:'NU'
-						}
-					]
-				},
-			]
-		}
+  constructor(schema, fieldsLocationDOM) {
+    console.log(schema)
+    //create copy of the fields
+    this.fields = schema.fields
+    this.fieldsLocationDOM = fieldsLocationDOM
+    this.createAllFields()
+    this.goToQuestion(0)
+    this.nrQuestions = document.querySelectorAll('.slider fieldset').length
+    // this.nrQuestions = this.fields.length
+    this.updateProgressBar()
 
-		class SurveyBuilder {
+    this.sendBtnDOM = document.querySelector('.form-buttons .send-btn')
+    this.formBtns = document.querySelector('.form-buttons')
 
-			fields
-			fieldsLocationDOM
-			nrQuestions
-			currQuestion = 0
-			currSelect
-			outputSchema = []
-			createdFieldsDOM = []
-			allowNext = true
+    this.bindedAddEvents = (e) => {
+      if (e.target.className.includes('next-btn')) this.nextQuestion(e)
+      if (e.target.className.includes('prev-btn')) this.prevQuestion(e)
+      if (e.target.className.includes('send-btn')) this.sendSurvey(e)
+    }
 
-			constructor(schema, fieldsLocationDOM){
-				//create copy of the fields
-				this.fields = schema.fields
-				this.fieldsLocationDOM = fieldsLocationDOM
-				this.createAllFields()
-				this.goToQuestion(0)
-				this.nrQuestions = document.querySelectorAll('.slider fieldset').length
-				this.updateProgressBar()
+    this.formBtns.addEventListener('click', this.bindedAddEvents)
 
-				this.sendBtnDOM = document.querySelector('.form-buttons .send-btn')
-				document.querySelector('.form-buttons').addEventListener('click',(e)=>{
-					if(e.target.className.includes('next-btn')) this.nextQuestion(e)
-					if(e.target.className.includes('prev-btn')) this.prevQuestion(e)
-					if(e.target.className.includes('send-btn')) this.sendSurvey(e)
-				})
+    console.log(this.fields)
+  }
 
-				console.log(this.fields)
-			}
+  createAllFields() {
+    // console.log(schema.fields)
+    this.fields.forEach((field, index) => {
+      //Add unique id to be synced with the schema
+      const id = this._createInputId(10)
+      //Add field as select dom element
+      const createdField = this.createField(field, index, id)
+      this.createdFieldsDOM.push(createdField)
 
-			createAllFields(){
-				// console.log(schema.fields)
-				this.fields.forEach((field,index)=>{
+      //Add props in outputSchema
+      this.outputSchema.push({
+        id: id,
+        title: field.title,
+        options: field.options,
+      })
 
-					//Add unique id to be synced with the schema
-					const id = this._createInputId(10)
-					//Add field as select dom element
-					const createdField = this.createField(field,index, id)
-					this.createdFieldsDOM.push(createdField)
+      //Add events to each fields that updates the schema
+      createdField.addEventListener('change', this.updateSchema.bind(this))
+    })
+  }
 
-					//Add props in outputSchema
-					this.outputSchema.push({
-						id:id,
-						title:field.title,
-						options:field.options
-					})
+  updateSchema(e) {
+    const questionId = e.target.dataset.id
+    const outputField = this.outputSchema.find(
+      (field) => field.id == questionId,
+    )
+    const selectedValue = e.target.value
 
-					//Add events to each fields that updates the schema
-					createdField.addEventListener('change',this.updateSchema.bind(this))
-				})
+    if (!outputField) {
+      this.allowNext = false
+      throw new Error('field not found')
+    }
 
+    const valueAllowed = outputField.options.find(
+      (el) => el.value == selectedValue,
+    )
 
-			}
+    if (!valueAllowed) {
+      this.allowNext = false
+      throw new Error('value not allowed')
+    }
 
-			updateSchema(e){
-				const questionId = e.target.dataset.id
-				const outputField = this.outputSchema.find(field=> field.id == questionId)
-				const selectedValue = e.target.value
+    outputField.value = selectedValue
 
-				if(!outputField){
-					this.allowNext = false
-					throw new Error('field not found')
-				}
+    this.allowNext = true
 
-				const valueAllowed = outputField.options.find(el=> el.value == selectedValue)
+    console.log(this.outputSchema)
+  }
 
-				if(!valueAllowed){
-					this.allowNext = false
-					throw new Error('value not allowed')
-				}
+  createField(field, questionNr, id) {
+    const { title, options } = field
 
-				outputField.value = selectedValue
-
-				this.allowNext = true
-
-				console.log(this.outputSchema)
-			}
-
-
-			createField(field,questionNr, id){
-				const {title,options} = field
-
-				let html = `<fieldset data-id='${id}'>
+    let html = `<fieldset data-id='${id}'>
 								<div class="fs-title">Intrebarea ${questionNr + 1}</div>
 								<div class="fs-subtitle">
 									${title}
@@ -202,9 +211,9 @@
 											<option disabled hidden selected>
 
 											</option>
-											${options.map((opt,index)=>{
-												return `<option value="${opt.value}">${opt.label}</option>`
-											})}
+											${options.map((opt, index) => {
+                        return `<option value="${opt.value}">${opt.label}</option>`
+                      })}
 										</select>
 										<div class="error">
 											Raspuns obligatoriu
@@ -214,182 +223,180 @@
 								</div>
 						</fieldset>`
 
-				this.fieldsLocationDOM.insertAdjacentHTML('beforeend',html)
+    this.fieldsLocationDOM.insertAdjacentHTML('beforeend', html)
 
-				// return created dom element
-				return document.querySelector(`fieldset[data-id="${id}"]`)
-			}
+    // return created dom element
+    return document.querySelector(`fieldset[data-id="${id}"]`)
+  }
 
+  goToQuestion(questionNr) {
+    Array.from(document.querySelectorAll('.slider fieldset')).forEach(
+      (question, i) => {
+        const margin = 0
+        const scale = questionNr == i ? 'scale(1)' : 'scale(0.5)'
+        const opacity = questionNr == i ? '1' : '0.2'
 
+        question.style.transform = `translateX(${
+          100 * (i - questionNr) + margin
+        }%) ${scale}`
+        question.style.opacity = opacity
+      },
+    )
+  }
 
-			goToQuestion(questionNr){
-				Array.from(document.querySelectorAll('.slider fieldset')).forEach((question, i) => {
+  addSendSurveyCallback(callback) {
+    this.sendSurveyCallback = callback
+  }
 
-					const margin = 0
-					const scale = questionNr == i ? 'scale(1)' : 'scale(0.5)'
-					const opacity = questionNr == i ? '1'      : '0.2'
+  sendSurvey(e) {
+    const currSelect = this.createdFieldsDOM[this.currQuestion].querySelector(
+      'select',
+    )
+    if (!currSelect) return
+    const value = currSelect.value
+    if (!value) return
 
-					question.style.transform = `translateX(${100 * (i - questionNr) + margin }%) ${scale}`
-					question.style.opacity = opacity
-				});
-			}
+    this.sendSurveyCallback(JSON.stringify(this.outputSchema))
+  }
 
-			addSendSurveyCallback(callback){
-				this.sendSurveyCallback = callback
-			}
+  nextQuestion(e) {
+    const nextBtn = e.target
 
-			sendSurvey(e){
-				const currSelect = this.createdFieldsDOM[this.currQuestion].querySelector('select')
-				if(!currSelect) return
-				const value = currSelect.value
-				if(!value) return
-				
-				this.sendSurveyCallback(JSON.stringify(this.outputSchema))
-			}
+    console.log(this.allowNext)
+    //Check if next allowed
+    if (!this.allowNext) {
+      throw new Error('Not allowed')
+      return
+    }
 
+    //Wait until option is selected
+    const currSelect = this.createdFieldsDOM[this.currQuestion].querySelector(
+      'select',
+    )
 
-			nextQuestion(e) {
-				const nextBtn = e.target
+    if (!currSelect.value) return
 
-				console.log(this.allowNext)
-				//Check if next allowed
-				if(!this.allowNext){
-					throw new Error('Not allowed')
-					return
-				}
+    //Stop moving to the next question when we're at the last one
+    if (this.currQuestion >= this.nrQuestions - 1) return
 
-				//Wait until option is selected
-				const currSelect = this.createdFieldsDOM[this.currQuestion].querySelector('select')
+    //Show SEND button and hide NEXT for the last question
+    if (this.currQuestion >= this.nrQuestions - 2) {
+      nextBtn.classList.add('hide')
+      this.sendBtnDOM.classList.remove('hide')
+    }
 
-				if(!currSelect.value) return
+    this.currQuestion++
 
-				//Stop moving to the next question when we're at the last one
-				if(this.currQuestion >= this.nrQuestions -1) return
+    //move UI to next question
+    this.goToQuestion(this.currQuestion)
+    this.updateProgressBar()
+  }
 
-				//Show SEND button and hide NEXT for the last question
-				if(this.currQuestion >= this.nrQuestions -2){
-					nextBtn.classList.add('hide')
-					this.sendBtnDOM.classList.remove('hide')
-				}
+  prevQuestion() {
+    if (this.currQuestion === 0) return
+    this.currQuestion--
+    //move UI to prev question
+    this.goToQuestion(this.currQuestion)
+    this.updateProgressBar()
 
+    nextBtn.classList.remove('hide')
+    this.sendBtnDOM.classList.add('hide')
+  }
 
-				this.currQuestion++
+  updateProgressBar() {
+    progressBar.style.width =
+      ((this.currQuestion + 1) / this.nrQuestions) * 100 + '%'
+  }
 
+  _createInputId(randStringLength) {
+    if (!randStringLength || randStringLength < 1) return
 
-				//move UI to next question
-				this.goToQuestion(this.currQuestion)
-				this.updateProgressBar()
+    const alphabet = [...Array(26).keys()].map((i) =>
+      String.fromCharCode(i + 97),
+    )
+    const nrs = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    const hex = [...alphabet, ...nrs]
+    const random = function () {
+      return Math.floor(Math.random() * hex.length)
+    }
+    return [...Array(randStringLength)].map(() => hex[random()]).join('')
+  }
 
-			}
+  reset() {
+    this.createdFieldsDOM.forEach((domEl) => domEl.remove())
+    this.formBtns.removeEventListener('click', this.bindedAddEvents)
+    nextBtn.classList.remove('hide')
+    this.sendBtnDOM.classList.add('hide')
+  }
+}
 
-			prevQuestion(){
-				if(this.currQuestion === 0) return
-				this.currQuestion--
-				//move UI to prev question
-				this.goToQuestion(this.currQuestion)
-				this.updateProgressBar()
+//slider navigation
+// document.querySelector('.form-buttons').addEventListener('click',(e)=>{
+// 	if(e.target.className.includes('next-btn')) nextQuestion()
+// 	if(e.target.className.includes('prev-btn')) prevQuestion()
+// })
 
-				nextBtn.classList.remove('hide')
-				this.sendBtnDOM.classList.add('hide')
+// const goToQuestion = function(questionNr){
+// 	Array.from(document.querySelectorAll('.slider fieldset')).forEach((question, i) => {
+// 		// console.log(`translateX(${100 * (i - questionNr)})`)
 
-			}
+// 		// console.log(progressBar.style.width = '30%')
 
-			 updateProgressBar(){
-				progressBar.style.width =( this.currQuestion + 1) / this.nrQuestions * 100 + '%'
-			}
+// 		const margin = 0
+// 		const scale = questionNr == i ? 'scale(1)' : 'scale(0.5)'
 
-			_createInputId(randStringLength){
+// 		question.style.transform = `translateX(${100 * (i - questionNr) + margin }%) ${scale}`
 
-				if(!randStringLength || randStringLength < 1) return
+// 		// progressBar.style.width = `${currQuestion / questionNr * 100}%`
+// 	});
+// }
 
-				const alphabet = [...Array(26).keys()].map(i => String.fromCharCode(i + 97));
-				const nrs = [1,2,3,4,5,6,7,8,9]
-				const hex = [...alphabet, ...nrs]
-				const random = function(){
-					return Math.floor(Math.random() * hex.length)
-				}
-				return [...Array(randStringLength)].map(()=>hex[random()]).join('')
+// function nextQuestion() {
+// 	console.log({
+// 		currQuestion,
+// 		questionNr
+// 	})
+// 	if(currQuestion >= questionNr -1) return
+// 	currQuestion++
+// 	goToQuestion(currQuestion)
+// 	updateProgressBar()
+// }
 
-			}
-		}
+// function prevQuestion(){
+// 	if(currQuestion === 0) return
+// 	currQuestion--
+// 	goToQuestion(currQuestion)
+// 	updateProgressBar()
+// }
 
+// goToQuestion(currQuestion)
+// updateProgressBar(1)
 
+// function createAllFields(){
+// 	console.log(schema.fields)
+// 	schema.fields.forEach((el,index)=>{
+// 		// console.log(el)
+// 	})
+// }
 
+// function createField(){
 
-		//slider navigation
-		// document.querySelector('.form-buttons').addEventListener('click',(e)=>{
-		// 	if(e.target.className.includes('next-btn')) nextQuestion()
-		// 	if(e.target.className.includes('prev-btn')) prevQuestion()
-		// })
+// <fieldset>
 
-		// const goToQuestion = function(questionNr){
-		// 	Array.from(document.querySelectorAll('.slider fieldset')).forEach((question, i) => {
-		// 		// console.log(`translateX(${100 * (i - questionNr)})`)
+// 	<div class="fs-title">Intrebarea 4</div>
+// 	<div class="fs-subtitle">
+// 		What postgraduate qualifications do you hold?
+// 	</div>
 
-		// 		// console.log(progressBar.style.width = '30%')
+// 	<div class="input-slider">
+// 		<div class="fs-input">
+// 			<select name="" id="">
+// 				<option value="1">Bucuresti</option>
+// 				<option value="2">Brasov</option>
+// 				<option value="3">Cluj</option>
+// 			</select>
+// 		</div>
 
-		// 		const margin = 0
-		// 		const scale = questionNr == i ? 'scale(1)' : 'scale(0.5)'
-
-		// 		question.style.transform = `translateX(${100 * (i - questionNr) + margin }%) ${scale}`
-
-		// 		// progressBar.style.width = `${currQuestion / questionNr * 100}%`
-		// 	});
-		// }
-
-		// function nextQuestion() {
-		// 	console.log({
-		// 		currQuestion,
-		// 		questionNr
-		// 	})
-		// 	if(currQuestion >= questionNr -1) return
-		// 	currQuestion++
-		// 	goToQuestion(currQuestion)
-		// 	updateProgressBar()
-		// }
-
-		// function prevQuestion(){
-		// 	if(currQuestion === 0) return
-		// 	currQuestion--
-		// 	goToQuestion(currQuestion)
-		// 	updateProgressBar()
-		// }
-
-
-
-		// goToQuestion(currQuestion)
-		// updateProgressBar(1)
-
-
-		// function createAllFields(){
-		// 	console.log(schema.fields)
-		// 	schema.fields.forEach((el,index)=>{
-		// 		// console.log(el)
-		// 	})
-		// }
-
-
-
-		// function createField(){
-
-				// <fieldset>
-
-				// 	<div class="fs-title">Intrebarea 4</div>
-				// 	<div class="fs-subtitle">
-				// 		What postgraduate qualifications do you hold?
-				// 	</div>
-
-				// 	<div class="input-slider">
-				// 		<div class="fs-input">
-				// 			<select name="" id="">
-				// 				<option value="1">Bucuresti</option>
-				// 				<option value="2">Brasov</option>
-				// 				<option value="3">Cluj</option>
-				// 			</select>
-				// 		</div>
-
-				// 	</div>
-				// </fieldset>
-		// }
-
-
+// 	</div>
+// </fieldset>
+// }

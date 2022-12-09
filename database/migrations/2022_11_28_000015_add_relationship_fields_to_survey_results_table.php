@@ -17,6 +17,11 @@ class AddRelationshipFieldsToSurveyResultsTable extends Migration
             $table->foreign('categorie_de_control_id', 'categorie_de_control_fk_7689133')->references('id')->on('categorie_de_controls');
             $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('user_id', 'user_fk_7607698')->references('id')->on('users');
+
+            $table->unsignedBigInteger('survey_builder_id')->nullable();
+            $table->foreign('survey_builder_id', 'survey_builder_fk_7607699')->references('id')->on('survey_builders');
+
+
         });
     }
 }

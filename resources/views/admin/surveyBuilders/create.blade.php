@@ -146,16 +146,17 @@
     controlCategory.css('display','none')
     formBuilderWrapper.css('display','none')
 
-    console.log('asd')
 
     //Get dimensions based on the departament selected
     departamentSelect.on('change',function(){
         const depId = $(this).val()
-
         departament_id = depId
 
         //empty dimension select options
         dimensionSelect.empty()
+
+         //empty controll category select options
+         controlCategorySerect.empty()
 
         //empty control categories select options
         // controlCategorySerect.empty().trigger('change')
@@ -177,12 +178,15 @@
 
         dimension_id = dimId
 
+         //empty controll category select options
+        controlCategorySerect.empty()
+
         if(!dimId || !departament_id) return
 
         (async function(){
 
             try {
-                const response = await fetch('/admin/survey-builders/get-categories',{
+                const response = await fetch('/admin/survey-builders/get-available-categories',{
                     method: 'POST',
                     headers:{
                         'Accept':'application/json',
@@ -283,7 +287,7 @@
     }
 
     async function buildForm (){
-        const fb = new surveyBuilder(([]))
+        const fb = new SurveyBuilder(([]))
         builtForm = fb
         //add function that is triggered when the save btn is pressed
         fb.addSaveCallback(updateFormSchema)
@@ -311,16 +315,13 @@
                     dep_id:departament_id,
                     dim_id:dimension_id,
                     cat_id:control_category_id,
-                    schema:JSON.parse(schema)
+                    schema:schema
                 })
             });
 
             const resData = await response.json();
 
-            console.log(
-                resData
-            )
-            // window.location.href = '/admin/survey-builders'
+            window.location.href = '/admin/survey-builders'
 
 
             if(resData.status === 'ok'){
