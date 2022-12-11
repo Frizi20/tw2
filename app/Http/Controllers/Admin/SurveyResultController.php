@@ -20,8 +20,9 @@ class SurveyResultController extends Controller
     {
         abort_if(Gate::denies('survey_result_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $surveyResults = SurveyResult::with(['departament', 'user'])->get();
+        $surveyResults = SurveyResult::with(['departament', 'user','surveyBuilder'])->where('user_id',Auth::user()->id)->get();
 
+        
         return view('admin.surveyResults.index', compact('surveyResults'));
     }
 
@@ -35,6 +36,25 @@ class SurveyResultController extends Controller
 
 
         return view('admin.surveyResults.create', compact('departaments', 'user'));
+    }
+
+    public function storeSurveyResult(Request $request)
+    {   
+
+        $user_id = Auth::user()->id;
+
+
+        $createdSurveyResult = SurveyResult::create([
+            'schema_results' => $request->schema,
+            'user_id' => $user_id,
+            'survey_builder_id' => $request->surv_id,
+
+        ]);
+
+
+
+        return response()->json($createdSurveyResult);
+
     }
 
     public function store(StoreSurveyResultRequest $request)

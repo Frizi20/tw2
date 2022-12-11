@@ -51,6 +51,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::resource('survey-builders', 'SurveyBuilderController');
 
     // Survey Result
+    
+    Route::post('survey-results/store-survey-result', 'SurveyResultController@storeSurveyResult')->name('survey-results.storeSurveyResult');
+    
     Route::delete('survey-results/destroy', 'SurveyResultController@massDestroy')->name('survey-results.massDestroy');
     Route::resource('survey-results', 'SurveyResultController');
 

@@ -119,11 +119,11 @@
                 </div>
 
             </div>
-            <div class="form-group">
+            {{-- <div class="form-group">
                 <button class="btn btn-danger" type="submit">
                     {{ trans('global.save') }}
                 </button>
-            </div>
+            </div> --}}
         </form>
     </div>
 </div>
@@ -148,6 +148,7 @@
     let departament_id
     let dimension_id
     let control_category_id
+    let survey_builder_id
 
 
     dimensions.css('display','none')
@@ -157,6 +158,10 @@
 
    departamentSelect.on('change',function(){
         const depId = $(this).val()
+
+        //hide multipart form
+        multiPartWrapper.css('display','none')
+
 
         departament_id = depId
 
@@ -179,6 +184,9 @@
     dimensionSelect.on('change',function(){
         const dimId = $(this).val();
         dimension_id = dimId
+
+        //hide multipart form
+        multiPartWrapper.css('display','none')
 
         //empty controll category select options
         controlCategorySerect.empty()
@@ -260,6 +268,13 @@
 
             if(!response.ok) throw new Error('Survey builder could not be fetched')
             const data = await response.json()
+            
+            //check if form builder is allowed for this user
+            
+            if(!data.id) return false
+            
+
+            survey_builder_id = data.id
 
             return JSON.parse(data.schema)
 
@@ -274,6 +289,12 @@
 
         if( builtForm ){
             builtForm.reset()
+        }
+
+        if(!schema) {
+            alert('formularul a fost deja completat!')
+            multiPartWrapper.css('display','none')
+            return
         }
 
         multiPartWrapper.css('display','block')
@@ -329,10 +350,25 @@
 
     }
 
-    function sendSurveyResult(schema){
-        console.log(
-            JSON.parse(schema)
-        )
+    async function sendSurveyResult(schema){
+        
+        const response = await fetch('/admin/survey-results/store-survey-result', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN':document.querySelector('meta[name="csrf-token"]').content
+                    },
+                body: JSON.stringify({
+                    schema,
+                    surv_id:survey_builder_id
+                },null,4)
+        });
+
+        const data = await response.json()
+
+        console.log(data)
+
     }
 
 

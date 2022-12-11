@@ -12,6 +12,7 @@ use App\Models\Dimensiune;
 use App\Models\SurveyBuilder;
 use Gate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class SurveyBuilderController extends Controller
@@ -52,12 +53,25 @@ class SurveyBuilderController extends Controller
     // > Departamente::find(3)->dimensions[0]->categoriiDeControl->pluck('id')->all()
 
     public function getSurveyBuilder(Request $request)
-    {
+    {   
+
+        $user_id = Auth::user()->id;
+        //get the unique survey builder
         $sb = SurveyBuilder::where([
             ['dimensiune_id','=',$request->dim_id],
             ['departamente_id','=',$request->dep_id],
             ['categorie_de_control_id','=',$request->cat_id]
-        ])->get()[0];
+        ])->get()->first();
+        
+        //check if the survey was completed by current user
+        $surveyHasResultsForUser = $sb->surveyResults()->where('user_id','=',$user_id)->first();
+        
+        if($surveyHasResultsForUser){
+            return response()->json([
+                'status' => 'form completed'
+            ]);
+        }
+
 
         return response()->json($sb);
     }

@@ -27,11 +27,17 @@ class SurveyResult extends Model
         'created_at',
         'updated_at',
         'deleted_at',
+        'survey_builder_id'
     ];
 
     public function departament()
     {
         return $this->belongsTo(Departamente::class, 'departament_id');
+    }
+
+    public function surveyBuilder()
+    {
+        return $this->belongsTo(SurveyBuilder::class, 'survey_builder_id');
     }
 
     public function user()

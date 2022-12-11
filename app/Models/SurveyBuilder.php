@@ -46,6 +46,11 @@ class SurveyBuilder extends Model
         return $this->belongsTo(CategorieDeControl::class, 'categorie_de_control_id');
     }
 
+    public function surveyResults()
+    {
+        return $this->hasMany(SurveyResult::class,'survey_builder_id');
+    }
+
     protected function serializeDate(DateTimeInterface $date)
     {
         return $date->format('Y-m-d H:i:s');

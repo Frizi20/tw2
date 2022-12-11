@@ -321,6 +321,7 @@
 
             const resData = await response.json();
 
+
             window.location.href = '/admin/survey-builders'
 
 
