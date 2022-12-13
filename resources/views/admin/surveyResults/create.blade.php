@@ -268,11 +268,11 @@
 
             if(!response.ok) throw new Error('Survey builder could not be fetched')
             const data = await response.json()
-            
+
             //check if form builder is allowed for this user
-            
+
             if(!data.id) return false
-            
+
 
             survey_builder_id = data.id
 
@@ -292,7 +292,7 @@
         }
 
         if(!schema) {
-            alert('formularul a fost deja completat!')
+            alert('formularul a fost deja completat!a fost deja completat!')
             multiPartWrapper.css('display','none')
             return
         }
@@ -351,7 +351,7 @@
     }
 
     async function sendSurveyResult(schema){
-        
+
         const response = await fetch('/admin/survey-results/store-survey-result', {
                 method: 'POST',
                 headers: {
@@ -367,7 +367,15 @@
 
         const data = await response.json()
 
-        console.log(data)
+
+        if(!data.id){
+            alert('formularul a fost deja completat!')
+            location.reload();
+
+        }
+
+        window.location.href = '/admin/survey-results'
+
 
     }
 

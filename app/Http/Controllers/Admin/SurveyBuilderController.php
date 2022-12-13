@@ -53,7 +53,7 @@ class SurveyBuilderController extends Controller
     // > Departamente::find(3)->dimensions[0]->categoriiDeControl->pluck('id')->all()
 
     public function getSurveyBuilder(Request $request)
-    {   
+    {
 
         $user_id = Auth::user()->id;
         //get the unique survey builder
@@ -62,10 +62,10 @@ class SurveyBuilderController extends Controller
             ['departamente_id','=',$request->dep_id],
             ['categorie_de_control_id','=',$request->cat_id]
         ])->get()->first();
-        
+
         //check if the survey was completed by current user
         $surveyHasResultsForUser = $sb->surveyResults()->where('user_id','=',$user_id)->first();
-        
+
         if($surveyHasResultsForUser){
             return response()->json([
                 'status' => 'form completed'
@@ -75,7 +75,7 @@ class SurveyBuilderController extends Controller
 
         return response()->json($sb);
     }
-
+ 
     public function getControllCategories(Request $request)
     {
         $departamenteId = $request->dep_id;

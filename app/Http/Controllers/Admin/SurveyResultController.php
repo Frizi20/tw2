@@ -22,7 +22,7 @@ class SurveyResultController extends Controller
 
         $surveyResults = SurveyResult::with(['departament', 'user','surveyBuilder'])->where('user_id',Auth::user()->id)->get();
 
-        
+
         return view('admin.surveyResults.index', compact('surveyResults'));
     }
 
@@ -39,10 +39,20 @@ class SurveyResultController extends Controller
     }
 
     public function storeSurveyResult(Request $request)
-    {   
+    {
 
         $user_id = Auth::user()->id;
 
+
+        //check if the selected survey builder was created by current user
+
+        $surveyIsResolvedByUser = SurveyResult::where([['user_id','=',Auth()->user()->id],['survey_builder_id','=',$request->surv_id]])->first();
+
+        if($surveyIsResolvedByUser){
+            return response()->json([
+                'status' => 'form completed'
+            ]);
+        }
 
         $createdSurveyResult = SurveyResult::create([
             'schema_results' => $request->schema,

@@ -49,6 +49,11 @@ class User extends Authenticatable
         'deleted_at',
     ];
 
+    public function surveyResults()
+    {
+        return $this->hasMany(SurveyResult::class,'user_id');
+    }
+
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);

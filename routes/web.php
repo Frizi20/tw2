@@ -13,7 +13,12 @@ Route::get('userVerification/{token}', 'UserVerificationController@approve')->na
 Auth::routes();
 
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'middleware' => ['auth']], function () {
+    //Dashbord
     Route::get('/', 'HomeController@index')->name('home');
+    Route::get('/departaments-results','HomeController@getDepartamentsResults')->name('getDepartamentsResults');
+
+    Route::get('/categories-results','HomeController@getCategoriesResults')->name('getCategoriesResults');
+
     // Permissions
     Route::delete('permissions/destroy', 'PermissionsController@massDestroy')->name('permissions.massDestroy');
     Route::resource('permissions', 'PermissionsController');
@@ -51,9 +56,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::resource('survey-builders', 'SurveyBuilderController');
 
     // Survey Result
-    
+
     Route::post('survey-results/store-survey-result', 'SurveyResultController@storeSurveyResult')->name('survey-results.storeSurveyResult');
-    
+
     Route::delete('survey-results/destroy', 'SurveyResultController@massDestroy')->name('survey-results.massDestroy');
     Route::resource('survey-results', 'SurveyResultController');
 
