@@ -11,7 +11,7 @@
             @csrf
             <div class="form-group">
                 <label class="required" for="dimensiune">{{ trans('cruds.dimensiune.fields.dimensiune') }}</label>
-                <textarea class="form-control {{ $errors->has('dimensiune') ? 'is-invalid' : '' }}" name="dimensiune" id="dimensiune" required>{{ old('dimensiune') }}</textarea>
+                <input type="text" class="form-control {{ $errors->has('dimensiune') ? 'is-invalid' : '' }}" name="dimensiune" id="dimensiune" required>{{ old('dimensiune') }}
                 @if($errors->has('dimensiune'))
                     <div class="invalid-feedback">
                         {{ $errors->first('dimensiune') }}

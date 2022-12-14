@@ -1,5 +1,23 @@
 @extends('layouts.admin')
 @section('content')
+
+@section('styles')
+@parent
+    <style>
+        .dimension-surveys{
+            
+            display: flex;
+            justify-content: space-between; 
+        }
+
+        .dimension-surveys > div{
+            width: 170px
+        }
+
+        
+    </style>
+@endsection
+
 <div class="content">
     <div class="row">
         <div class="col-lg-12">
@@ -7,16 +25,16 @@
                 <div class="card-header">
                     Dashboard
                 </div>
+                
 
                 <div class="container col-md-12 d-flex flex-sm-row flex-column flex-wrap">
                     <div class="col-md-6 pt-5 ">
                         <div class="card">
-                            <div class="card-header" style="min-height: 130px;">
+                            <div class="card-header dimension-surveys" style="height: 55px;">
                                 <h5>Completitudine dimensiuni</h5>
 
                                 <div class="form-group">
-                                    <label for="departament_id">{{ trans('cruds.surveyResult.fields.departament')
-                                        }}</label>
+                                   
                                     <select
                                         class="form-control select2 {{ $errors->has('departament') ? 'is-invalid' : '' }}"
                                         name="departament_id" id="departament_id">
@@ -46,7 +64,7 @@
 
                     <div class="col-md-6 pt-5 ">
                         <div class="card">
-                            <div class="card-header" style="min-height: 130px;">
+                            <div class="card-header" style="height: 55px;">
                                 <h5> Completitudine categorii de control </h5>
                             </div>
                             <div class="card-body">
