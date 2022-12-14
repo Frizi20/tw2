@@ -16,6 +16,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     //Dashbord
     Route::get('/', 'HomeController@index')->name('home');
     Route::get('/departaments-results','HomeController@getDepartamentsResults')->name('getDepartamentsResults');
+    // Route::get('/departaments-categor');
 
     Route::get('/categories-results','HomeController@getCategoriesResults')->name('getCategoriesResults');
 
@@ -66,7 +67,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::delete('dimensiunes/destroy', 'DimensiuneController@massDestroy')->name('dimensiunes.massDestroy');
     Route::resource('dimensiunes', 'DimensiuneController');
 
-    // Categorie De Control
+    // Categorie De asdfgeasdafasfasfffgg    
     Route::delete('categorie-de-controls/destroy', 'CategorieDeControlController@massDestroy')->name('categorie-de-controls.massDestroy');
     Route::resource('categorie-de-controls', 'CategorieDeControlController');
 });

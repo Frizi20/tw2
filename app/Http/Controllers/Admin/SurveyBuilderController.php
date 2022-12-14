@@ -23,6 +23,7 @@ class SurveyBuilderController extends Controller
 
         $surveyBuilders = SurveyBuilder::with(['departamente', 'categorie_de_control', 'dimensiuni'])->get();
 
+
         return view('admin.surveyBuilders.index', compact('surveyBuilders'));
     }
 
@@ -75,7 +76,7 @@ class SurveyBuilderController extends Controller
 
         return response()->json($sb);
     }
- 
+
     public function getControllCategories(Request $request)
     {
         $departamenteId = $request->dep_id;

@@ -58,7 +58,7 @@
                                 {{ $surveyBuilder->departamente->nume ?? '' }}
                             </td>
                             <td>
-                                {{ json_encode($surveyBuilder->dimensiuni->dimensiune ?? '') }}
+                                {{ ($surveyBuilder->dimensiuni->dimensiune ?? '') }}
                             </td>
                             <td>
                                 {{ $surveyBuilder->categorie_de_control->nume ?? '' }}

@@ -11,9 +11,29 @@
                 <div class="container col-md-12 d-flex flex-sm-row flex-column flex-wrap">
                     <div class="col-md-6 pt-5 ">
                         <div class="card">
-                            <div class="card-header">
-                                <h5>Completitudine dimensiuni
-                                </h5>
+                            <div class="card-header" style="min-height: 130px;">
+                                <h5>Completitudine dimensiuni</h5>
+
+                                <div class="form-group">
+                                    <label for="departament_id">{{ trans('cruds.surveyResult.fields.departament')
+                                        }}</label>
+                                    <select
+                                        class="form-control select2 {{ $errors->has('departament') ? 'is-invalid' : '' }}"
+                                        name="departament_id" id="departament_id">
+                                        @foreach($departaments as $id => $entry)
+                                        <option value="{{ $id }}" {{ old('departament_id')==$id ? 'selected' : '' }}>{{
+                                            $entry }}</option>
+                                        @endforeach
+                                    </select>
+                                    @if($errors->has('departament'))
+                                    <div class="invalid-feedback">
+                                        {{ $errors->first('departament') }}
+                                    </div>
+                                    @endif
+                                    <span class="help-block">{{ trans('cruds.surveyResult.fields.departament_helper')
+                                        }}</span>
+                                </div>
+
                             </div>
                             <div class="card-body">
                                 <div style="">
@@ -26,7 +46,7 @@
 
                     <div class="col-md-6 pt-5 ">
                         <div class="card">
-                            <div class="card-header">
+                            <div class="card-header" style="min-height: 130px;">
                                 <h5> Completitudine categorii de control </h5>
                             </div>
                             <div class="card-body">
@@ -66,36 +86,76 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
 
 <script>
-
     function init(){
 
-        const chart1 = document.getElementById("radar-chart");
-        const chart2 = document.getElementById("radar-chart-2");
+        const chartDOM1 = document.getElementById("radar-chart");
+        const chartDOM2 = document.getElementById("radar-chart-2");
+        const departamentSelect = $('#departament_id')
 
-        (async function(){
+        let chart1
+
+
+
+        Promise.all([
+            getGraphData(1),
+            getGraphData()
+        ])
+        .then(([chartData1,chartData2])=>{
+
+            processedChartData1 = processData(chartData1)
+            processedChartData2 = processData(chartData2)
+
+            console.table(processedChartData1)
+            console.table(processedChartData2)
+
+            //create graphs
+
+            window.chart1 = createChart(chartDOM1,processedChartData1.titles,processedChartData1.values)
+            createChart(chartDOM2,processedChartData2.titles,processedChartData2.values)
+
+        })
+        .catch(error=>{
+            console.log(error)
+        })
+
+        departamentSelect.on('change', async function(){
+            const depID = $(this).val()
+
+            const data = await getGraphData(depID)
+            const processedData = processData(data)
+
+            window.chart1.data.datasets[0].data = processedData.values
+
+            window.chart1.update()
+
+        })
+
+        async function getGraphData(deepartament){
+
+            let params = deepartament ? `?depId=${deepartament}` :  '?all=true'
 
             try {
 
-                const response = await fetch('/admin/categories-results')
+                const response = await fetch(`/admin/categories-results/${params}`)
 
                 if(!response.ok) throw new Error('category survey results could not be fetched')
 
                 const data = await response.json()
 
+                return Promise.resolve(data)
+                // const categoryGraph = processData(data)
 
-                const categoryGraph = processData(data)
-                setTimeout(() => {
-                    createChart(chart2, categoryGraph.titles, categoryGraph.values)
-                    createChart(chart1, categoryGraph.titles, categoryGraph.values)
-
-                }, 100);
+                // console.log(categoryGraph)
 
 
             } catch (error) {
-                console.error(error)
+                return Promise.reject(error)
             }
 
-        })()
+        }
+
+
+
 
         function processData(data){
             const controlCategories = Object.entries(data).map((el)=>{
@@ -103,7 +163,6 @@
                 return value
             })
 
-            console.table(controlCategories)
 
             let categoriesSurveyAnswers = []
 
@@ -144,7 +203,7 @@
 
 
         function createChart(chartDOMLocation, titles, values){
-            new Chart(chartDOMLocation, {
+          const chartInstance = new Chart(chartDOMLocation, {
                 type: 'radar',
                 data: {
                 labels: titles,
@@ -185,7 +244,7 @@
                             display: false,
                             labels:{
                                 font:{
-                                    size:22
+                                    size:15
                                 }
                             }
                         },
@@ -198,7 +257,7 @@
                             pointLabels: {
                                 // color: 'red',
                                 font:{
-                                    size:13
+                                    size:'12'
                                 }
                             }
                         }
@@ -207,6 +266,8 @@
 
                 }
             });
+
+            return chartInstance
         }
     }
 
