@@ -4,6 +4,12 @@
 @section('styles')
 @parent
 <link rel="stylesheet" href="{{ asset('css/surveyBuilder.css') }}">
+
+<style>
+    .hide {
+        display: none !important;
+    }
+</style>
 @endsection
 
 <div class="card">
@@ -14,22 +20,6 @@
     <div class="card-body">
         <form method="POST" action="{{ (" ") }}" enctype="multipart/form-data">
             @csrf
-            <div class="form-group">
-                <label for="departamente_id">{{ trans('cruds.surveyBuilder.fields.departamente') }}</label>
-                <select class="form-control select2 {{ $errors->has('departamente') ? 'is-invalid' : '' }}"
-                    name="departamente_id" id="departamente_id">
-                    @foreach($departamentes as $id => $entry)
-                    <option value="{{ $id }}" {{ old('departamente_id')==$id ? 'selected' : '' }}>{{ $entry }}</option>
-                    @endforeach
-                </select>
-                @if($errors->has('departamente'))
-                <div class="invalid-feedback">
-                    {{ $errors->first('departamente') }}
-                </div>
-                @endif
-                <span class="help-block">{{ trans('cruds.surveyBuilder.fields.departamente_helper') }}</span>
-            </div>
-
             <div class="form-group ">
                 <div class="form-check {{ $errors->has('generala') ? 'is-invalid' : '' }}">
                     <input type="hidden" name="generala" value="0">
@@ -44,6 +34,22 @@
                 </div>
                 @endif
                 <span class="help-block">{{ trans('cruds.surveyBuilder.fields.generala_helper') }}</span>
+            </div>
+
+            <div class="form-group departaments">
+                <label for="departamente_id">{{ trans('cruds.surveyBuilder.fields.departamente') }}</label>
+                <select class="form-control select2 {{ $errors->has('departamente') ? 'is-invalid' : '' }}"
+                    name="departamente_id" id="departamente_id">
+                    @foreach($departamentes as $id => $entry)
+                    <option value="{{ $id }}" {{ old('departamente_id')==$id ? 'selected' : '' }}>{{ $entry }}</option>
+                    @endforeach
+                </select>
+                @if($errors->has('departamente'))
+                <div class="invalid-feedback">
+                    {{ $errors->first('departamente') }}
+                </div>
+                @endif
+                <span class="help-block">{{ trans('cruds.surveyBuilder.fields.departamente_helper') }}</span>
             </div>
 
             <div class="form-group dimensions">
@@ -129,6 +135,7 @@
 <script>
     const formBuilderWrapper = $('.form-builder-wrapper')
 
+    const departaments = $('.departaments')
     const dimensions = $('.dimensions')
     const controlCategory = $('.control-category')
     const departamentSelect = $('#departamente_id')
@@ -136,15 +143,42 @@
     const dimensionSelect = $('.dimensions .select2')
     const controlCategorySerect = $('.control-category .select2')
 
+    const generalCheckbox = $('#generala')
+
     let builtForm
 
     let departament_id
     let dimension_id
     let control_category_id
 
+    let isGeneral = false
+
     dimensions.css('display','none')
     controlCategory.css('display','none')
     formBuilderWrapper.css('display','none')
+
+
+    //
+    generalCheckbox.on('change',function () {
+        isChecked = $(this).prop('checked')
+        isGeneral = isChecked
+        if(builtForm){
+            builtForm.remove()
+        }
+
+        controlCategory.toggleClass('hide')
+        dimensions.toggleClass('hide')
+        departaments.toggleClass('hide')
+
+        if(isChecked){
+            buildForm()
+            formBuilderWrapper.css('display','block')
+
+
+        }else{
+            formBuilderWrapper.css('display','none')
+        }
+    })
 
 
     //Get dimensions based on the departament selected
@@ -298,11 +332,23 @@
     //update schema method
     async function updateFormSchema(schema){
 
-        if(!control_category_id && !departament_id && !dimension_id) {
-            alert('nu')
+
+        const bodyData = {
+            dep_id:departament_id,
+            dim_id:dimension_id,
+            cat_id:control_category_id,
+            schema:schema,
+            general:Number(isGeneral)
+        }
+
+
+
+        if(!control_category_id && !departament_id && !dimension_id && !isGeneral) {
+            alert('Completeaza toate campurile')
             return
         }
 
+       
 
         const response = await fetch('/admin/survey-builders/store-survey', {
                 method: 'POST',
@@ -311,18 +357,13 @@
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN':document.querySelector('meta[name="csrf-token"]').content
                     },
-                body: JSON.stringify({
-                    dep_id:departament_id,
-                    dim_id:dimension_id,
-                    cat_id:control_category_id,
-                    schema:schema
-                })
+                body: JSON.stringify(bodyData)
             });
 
             const resData = await response.json();
 
 
-            window.location.href = '/admin/survey-builders'
+            // window.location.href = '/admin/survey-builders'
 
 
             if(resData.status === 'ok'){

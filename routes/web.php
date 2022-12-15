@@ -67,7 +67,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::delete('dimensiunes/destroy', 'DimensiuneController@massDestroy')->name('dimensiunes.massDestroy');
     Route::resource('dimensiunes', 'DimensiuneController');
 
-    // Categorie De asdfgeasdafasfasfffgg    
+    // Categorie De asdfgeasdafasfasfffgg
     Route::delete('categorie-de-controls/destroy', 'CategorieDeControlController@massDestroy')->name('categorie-de-controls.massDestroy');
     Route::resource('categorie-de-controls', 'CategorieDeControlController');
 });

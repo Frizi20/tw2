@@ -13,6 +13,7 @@ use App\Models\SurveyBuilder;
 use Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use stdClass;
 use Symfony\Component\HttpFoundation\Response;
 
 class SurveyBuilderController extends Controller
@@ -30,10 +31,11 @@ class SurveyBuilderController extends Controller
     public function storeSurvey(Request $request)
     {
         $createdSurvey = SurveyBuilder::create([
-            'schema'=>$request->schema,
-            'departamente_id'=>$request->dep_id,
-            'dimensiune_id'   =>$request->dim_id,
-            'categorie_de_control_id'=>$request->cat_id
+            'schema' => $request->schema,
+            'departamente_id' => $request->dep_id,
+            'dimensiune_id'   => $request->dim_id,
+            'categorie_de_control_id' => $request->cat_id,
+            'generala'          => $request->general
         ]);
         return response()->json($createdSurvey);
     }
@@ -55,22 +57,47 @@ class SurveyBuilderController extends Controller
 
     public function getSurveyBuilder(Request $request)
     {
-
         $user_id = Auth::user()->id;
-        //get the unique survey builder
+
+        //return array with surveyBuilder and with the general questions of that builder
         $sb = SurveyBuilder::where([
-            ['dimensiune_id','=',$request->dim_id],
-            ['departamente_id','=',$request->dep_id],
-            ['categorie_de_control_id','=',$request->cat_id]
-        ])->get()->first();
+            ['dimensiune_id', '=', $request->dim_id],
+            ['departamente_id', '=', $request->dep_id],
+            ['categorie_de_control_id', '=', $request->cat_id]
+        ])->first();
+
+        if (!isset($sb)) {
+            return response()->json('No survey builder found');
+        }
 
         //check if the survey was completed by current user
-        $surveyHasResultsForUser = $sb->surveyResults()->where('user_id','=',$user_id)->first();
+        $surveyHasResultsForUser = $sb->surveyResults()->where('user_id', '=', $user_id)->first();
 
-        if($surveyHasResultsForUser){
+        if ($surveyHasResultsForUser) {
             return response()->json([
                 'status' => 'form completed'
             ]);
+        }
+
+        $generalQuestions = SurveyBuilder::where('generala', '=', 1)->first();
+
+
+        //if survey has general question add the general questions to the survey builder schema
+        if (isset($generalQuestions)) {
+            $survey = json_decode($sb->schema)->fields;
+            $generalQuestions = json_decode($generalQuestions->schema)->fields;
+
+
+            foreach ($generalQuestions as $key => $question) {
+                $generalQuestions[$key]->fieldOrder = 0;
+            }
+
+            $merged = array_merge($generalQuestions, $survey);
+
+            $mergedSb = $sb->schema = json_encode(["fields" => $merged]);
+
+
+            return response()->json(($sb));
         }
 
 

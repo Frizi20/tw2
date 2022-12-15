@@ -5,16 +5,16 @@
 @parent
     <style>
         .dimension-surveys{
-            
+
             display: flex;
-            justify-content: space-between; 
+            justify-content: space-between;
         }
 
         .dimension-surveys > div{
             width: 170px
         }
 
-        
+
     </style>
 @endsection
 
@@ -25,7 +25,7 @@
                 <div class="card-header">
                     Dashboard
                 </div>
-                
+
 
                 <div class="container col-md-12 d-flex flex-sm-row flex-column flex-wrap">
                     <div class="col-md-6 pt-5 ">
@@ -34,14 +34,14 @@
                                 <h5>Completitudine dimensiuni</h5>
 
                                 <div class="form-group">
-                                   
+
                                     <select
                                         class="form-control select2 {{ $errors->has('departament') ? 'is-invalid' : '' }}"
                                         name="departament_id" id="departament_id">
-                                        @foreach($departaments as $id => $entry)
-                                        <option value="{{ $id }}" {{ old('departament_id')==$id ? 'selected' : '' }}>{{
-                                            $entry }}</option>
-                                        @endforeach
+                                        <option value="" disabled selected>Select Departament</option>
+                                            @foreach($departaments as $id => $entry)
+                                                <option value="{{ $id }}" {{ old('departament_id')==$id ? 'selected' : '' }}>{{$entry }}</option>
+                                            @endforeach
                                     </select>
                                     @if($errors->has('departament'))
                                     <div class="invalid-feedback">

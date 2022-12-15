@@ -25,7 +25,7 @@ class HomeController
 		$getAll = isset($request->all) && $request->all === 'true';
 		$depId = $request->depId ?? '';
 
-		$catgegories = DB::table('categorie_de_controls')
+		$categories = DB::table('categorie_de_controls')
 			->whereNull('categorie_de_controls.deleted_at')
 			->leftJoin('survey_builders as sb', function ($join) use ($depId, $getAll) {
 				$join->on('sb.categorie_de_control_id', '=', 'categorie_de_controls.id');
@@ -61,9 +61,11 @@ class HomeController
 			->get();
 
 
+
+
 		$data = [];
 
-		foreach ($catgegories as $category) {
+		foreach ($categories as $category) {
 
 			if (!isset($data[$category->cat_id])) {
 				$data[$category->cat_id] = [

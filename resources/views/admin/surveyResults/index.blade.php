@@ -55,7 +55,10 @@
                                 {{ $surveyResult->user->name ?? '' }}
                             </td>
                             <td>
-                                {{ $surveyResult->schema_results ?? '' }}
+                                @foreach (json_decode($surveyResult->schema_results) as $key => $result  )
+                                <span style="background-color:#2eb85c;color:#fff;border-radius:5px;padding:5px;font-size:12px;font-weight:500;cursor: pointer;">
+                                    {{$result->title}}</span>
+                                @endforeach
                             </td>
                             <td>
                                 @can('survey_result_show')
@@ -136,7 +139,7 @@
       $($.fn.dataTable.tables(true)).DataTable()
           .columns.adjust();
   });
-  
+
 })
 
 </script>
