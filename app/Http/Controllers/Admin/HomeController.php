@@ -8,6 +8,7 @@ use App\Models\CategorieDeControl;
 use App\Models\Departamente;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController
 {
@@ -44,7 +45,7 @@ class HomeController
 
 
 				// Get results by user
-                // $join->where('sr.user_id', '=', 2);
+                $join->where('sr.user_id', '=', Auth::user()->id);
 			})
 			->leftJoin('users as u', 'u.id', '=', 'sr.user_id')
 			->select([
