@@ -24,6 +24,8 @@ class SurveyBuilderController extends Controller
 
         $surveyBuilders = SurveyBuilder::with(['departamente', 'categorie_de_control', 'dimensiuni'])->get();
 
+        // return response()->json($surveyBuilders);
+
 
         return view('admin.surveyBuilders.index', compact('surveyBuilders'));
     }
@@ -160,6 +162,20 @@ class SurveyBuilderController extends Controller
 
     public function edit(SurveyBuilder $surveyBuilder)
     {
+
+
+        abort_if(Gate::denies('survey_builder_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        // $departamentes = Departamente::has('surveys')->get()->pluck('nume', 'id')->prepend(trans('global.pleaseSelect'), '');
+
+
+        $departamentes = '';
+
+
+        return view('admin.surveyBuilders.edit', compact('departamentes', 'surveyBuilder'));
+
+
+        //------------------
         abort_if(Gate::denies('survey_builder_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $departamentes = Departamente::pluck('nume', 'id')->prepend(trans('global.pleaseSelect'), '');

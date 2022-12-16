@@ -29,8 +29,14 @@
                             {{ trans('cruds.surveyResult.fields.departament') }}
                         </th>
                         <th>
-                            {{ trans('cruds.surveyResult.fields.user') }}
+                            {{ trans('cruds.surveyResult.fields.dimensiune') }}
                         </th>
+                        <th>
+                            {{ trans('cruds.surveyResult.fields.categorie_de_control') }}
+                        </th>
+                        {{-- <th>
+                            {{ trans('cruds.surveyResult.fields.user') }}
+                        </th> --}}
                         <th>
                             {{ trans('cruds.surveyResult.fields.schema_results') }}
                         </th>
@@ -41,19 +47,25 @@
                 </thead>
                 <tbody>
                     @foreach($surveyResults as $key => $surveyResult)
-                        <tr data-entry-id="{{ $surveyResult->id }}">
+                        <tr data-entry-id="{{ $surveyResult->sr_id }}">
                             <td>
 
                             </td>
                             <td>
-                                {{ $surveyResult->id ?? '' }}
+                                {{ $surveyResult->sr_id ?? '' }}
                             </td>
                             <td>
-                                {{ $surveyResult->departament->nume ?? '' }}
+                                {{ $surveyResult->dep_name ?? '' }}
                             </td>
                             <td>
+                                {{ $surveyResult->dimensiune ?? '' }}
+                            </td>
+                            <td>
+                                {{ $surveyResult->cc_name ?? '' }}
+                            </td>
+                            {{-- <td>
                                 {{ $surveyResult->user->name ?? '' }}
-                            </td>
+                            </td> --}}
                             <td>
                                 @foreach (json_decode($surveyResult->schema_results) as $key => $result  )
                                 <span style="background-color:#2eb85c;color:#fff;border-radius:5px;padding:5px;font-size:12px;font-weight:500;cursor: pointer;">
@@ -62,19 +74,19 @@
                             </td>
                             <td>
                                 @can('survey_result_show')
-                                    <a class="btn btn-xs btn-primary" href="{{ route('admin.survey-results.show', $surveyResult->id) }}">
+                                    <a class="btn btn-xs btn-primary" href="{{ route('admin.survey-results.show', $surveyResult->sr_id) }}">
                                         {{ trans('global.view') }}
                                     </a>
                                 @endcan
 
                                 @can('survey_result_edit')
-                                    <a class="btn btn-xs btn-info" href="{{ route('admin.survey-results.edit', $surveyResult->id) }}">
+                                    <a class="btn btn-xs btn-info" href="{{ route('admin.survey-results.edit', $surveyResult->sr_id) }}">
                                         {{ trans('global.edit') }}
                                     </a>
                                 @endcan
 
                                 @can('survey_result_delete')
-                                    <form action="{{ route('admin.survey-results.destroy', $surveyResult->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
+                                    <form action="{{ route('admin.survey-results.destroy', $surveyResult->sr_id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
                                         <input type="hidden" name="_method" value="DELETE">
                                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                         <input type="submit" class="btn btn-xs btn-danger" value="{{ trans('global.delete') }}">

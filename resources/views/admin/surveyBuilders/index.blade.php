@@ -46,18 +46,26 @@
                     </tr>
                 </thead>
                 <tbody>
+
                     @foreach($surveyBuilders as $key => $surveyBuilder)
-                        <tr data-entry-id="{{ $surveyBuilder->id }}">
-                            <td>
+                        @php
+                            $isGeneral = $surveyBuilder->generala == '1' ? true : false
+                        @endphp
+
+                        <tr data-entry-id="{{ $surveyBuilder->id }} "
+                            {{-- {{$surveyBuilder->generala == 1 ? "style=background:grey;" : ''}} --}}
+                           >
+                            <td >
 
                             </td>
                             <td>
                                 {{ $surveyBuilder->id ?? '' }}
                             </td>
-                            <td>
-                                {{ $surveyBuilder->departamente->nume ?? '' }}
+                            <td {{$isGeneral ? 'style=border:none;' : '' }}>
+                                {{ $surveyBuilder->departamente->nume ?? ''}}
+                                {{ $isGeneral ? 'INTREBARI GENERALE' : ''}}
                             </td>
-                            <td>
+                            <td {{$isGeneral ? 'style=border:none;' : '' }}>
                                 {{ ($surveyBuilder->dimensiuni->dimensiune ?? '') }}
                             </td>
                             <td>
@@ -143,8 +151,15 @@
 
   $.extend(true, $.fn.dataTable.defaults, {
     orderCellsTop: true,
-    order: [[ 1, 'desc' ]],
+    aoColumnDefs:[ {
+        "bSortable" : false,
+        "aTargets" : [ "sorting_disabled" ]
+        }],
+    order: [[ 6, 'desc' ],[ 1, 'desc' ]],
     pageLength: 100,
+    drawCallback: (data) => {
+     console.log($(this))
+    }
   });
   let table = $('.datatable-SurveyBuilder:not(.ajaxTable)').DataTable({ buttons: dtButtons })
   $('a[data-toggle="tab"]').on('shown.bs.tab click', function(e){

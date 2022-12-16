@@ -13,6 +13,7 @@ use Gate;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class SurveyResultController extends Controller
 {
@@ -20,7 +21,36 @@ class SurveyResultController extends Controller
     {
         abort_if(Gate::denies('survey_result_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $surveyResults = SurveyResult::with(['departament', 'user','surveyBuilder'])->where('user_id',Auth::user()->id)->get();
+        $user_id = Auth::user()->id;
+
+        $surveyResults = DB::table('survey_results as sr')
+        ->select([
+            'sr.id as sr_id',
+            'sb.id as sb_id',
+            'dep.nume as dep_name',
+            'sr.*',
+            'sb.*',
+            'dep.*',
+            'dim.*',
+            'cc.nume as cc_name'
+        ])
+        ->where('sr.user_id','=', $user_id)
+        ->leftJoin('survey_builders as sb', function($join){
+            $join->on('sb.id','=','sr.survey_builder_id');
+        })
+        ->leftJoin('departamentes as dep','dep.id','=','sb.departamente_id')
+        // ->leftJoin('departament')
+        ->leftJoin('dimensiunes as dim','dim.id','=','sb.dimensiune_id')
+        ->leftJoin('categorie_de_controls as cc','cc.id','=','sb.categorie_de_control_id')
+        ->get();
+
+        // $surveyResults = SurveyResult::with(['departament', 'user','surveyBuilder'])
+        // ->where('user_id',Auth::user()->id)
+        // ->leftJoin('departamentes','departamentes.id','=', 'survey_builders.departamente_id')
+        // ->get();
+
+
+        // return response()->json($surveyResults);
 
 
         return view('admin.surveyResults.index', compact('surveyResults'));
