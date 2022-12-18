@@ -45,7 +45,7 @@ class HomeController
 
 
 				// Get results by user
-                $join->where('sr.user_id', '=', Auth::user()->id);
+                // $join->where('sr.user_id', '=', Auth::user()->id);
 			})
 			->leftJoin('users as u', 'u.id', '=', 'sr.user_id')
 			->select([
