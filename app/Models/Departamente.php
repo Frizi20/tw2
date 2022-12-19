@@ -36,6 +36,10 @@ class Departamente extends Model
         return $this->hasMany(Dimensiune::class,'departament_id');
     }
 
+    public function dimensionss()
+    {
+        return $this->belongsToMany(Dimensiune::class, 'survey_builders','departamente_id','dimensiune_id');
+    }
 
     public function created_by()
     {

@@ -33,6 +33,11 @@ class Dimensiune extends Model
         return $this->belongsTo(Departamente::class, 'departament_id');
     }
 
+    public function departaments()
+    {
+        return $this->belongsToMany(Departamente::class,'departamentes_dimensiunes','dimensiune_id','departament_id');
+    }
+
     // > Departamente::find(3)->dimensions[0]->categoriiDeControl
     public function categoriiDeControl()
     {

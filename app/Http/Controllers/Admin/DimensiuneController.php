@@ -18,25 +18,55 @@ class DimensiuneController extends Controller
     {
         abort_if(Gate::denies('dimensiune_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $dimensiunes = Dimensiune::with(['departament'])->get();
+        $dimensiunes = Dimensiune::with(['departaments'])->get();
+
+
+
 
         return view('admin.dimensiunes.index', compact('dimensiunes'));
     }
+
+
 
     public function create()
     {
         abort_if(Gate::denies('dimensiune_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $departaments = Departamente::pluck('nume', 'id')->prepend(trans('global.pleaseSelect'), '');
+        $departaments = Departamente::pluck('nume', 'id');
 
-        return view('admin.dimensiunes.create', compact('departaments'));
+        $dimensions = Dimensiune::pluck('dimensiune', 'id')->prepend(trans('global.pleaseSelect'), '');
+
+
+
+        return view('admin.dimensiunes.create', compact('departaments', 'dimensions'));
     }
-
-    public function store(StoreDimensiuneRequest $request)
+    // StoreDimensiuneRequest
+    public function store(Request $request)
     {
-        $dimensiune = Dimensiune::create($request->all());
 
-        return redirect()->route('admin.dimensiunes.index');
+        $dimensiune = Dimensiune::create([
+            'dimensiune' => $request->input('dimensiune')
+        ]);
+
+        $x = $dimensiune->departaments()->sync($request->input('departaments',[]));
+        // $role = Role::create($request->all());
+        // $role->permissions()->sync($request->input('permissions', []));
+
+        // return redirect()->route('admin.roles.index');
+
+        return response()->json($x);
+
+        // $dimensiune = Dimensiune::create($request->all());
+        $dimensiune = Dimensiune::create([
+            'dimensiune' => 'Dimensiune Conta'
+        ]);
+
+        $dimensiune->departamentx()->attach([2, 3]);
+
+        // return redirect()->route('admin.dimensiunes.index');
+
+
+        return response()->json($request->all());
     }
 
     public function edit(Dimensiune $dimensiune)

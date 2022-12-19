@@ -49,7 +49,11 @@
                                 {{ $dimensiune->dimensiune ?? '' }}
                             </td>
                             <td>
-                                {{ $dimensiune->departament->nume ?? '' }}
+
+                                @foreach($dimensiune->departaments as $key => $item)
+                                    <span class="badge badge-info">{{ $item->nume }}</span>
+                                @endforeach
+                                {{-- {{ $dimensiune->departament->nume ?? '' }} --}}
                             </td>
                             <td>
                                 @can('dimensiune_show')
@@ -130,7 +134,7 @@
       $($.fn.dataTable.tables(true)).DataTable()
           .columns.adjust();
   });
-  
+
 })
 
 </script>

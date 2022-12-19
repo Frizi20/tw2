@@ -64,6 +64,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::resource('survey-results', 'SurveyResultController');
 
     // Dimensiune
+    Route::get('dimensiunes/get-available-dimensions/{depId}','DimensiuneController@getDimensionsForDepartament')->name('dimensiunes.getDimensionsForDepartament');
+
     Route::delete('dimensiunes/destroy', 'DimensiuneController@massDestroy')->name('dimensiunes.massDestroy');
     Route::resource('dimensiunes', 'DimensiuneController');
 
