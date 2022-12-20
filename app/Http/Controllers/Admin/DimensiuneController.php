@@ -48,22 +48,13 @@ class DimensiuneController extends Controller
             'dimensiune' => $request->input('dimensiune')
         ]);
 
-        $x = $dimensiune->departaments()->sync($request->input('departaments',[]));
+        $dimensiune->departaments()->sync($request->input('departaments',[]));
         // $role = Role::create($request->all());
         // $role->permissions()->sync($request->input('permissions', []));
 
-        // return redirect()->route('admin.roles.index');
+        return redirect()->route('admin.dimensiunes.index');
 
-        return response()->json($x);
-
-        // $dimensiune = Dimensiune::create($request->all());
-        $dimensiune = Dimensiune::create([
-            'dimensiune' => 'Dimensiune Conta'
-        ]);
-
-        $dimensiune->departamentx()->attach([2, 3]);
-
-        // return redirect()->route('admin.dimensiunes.index');
+      
 
 
         return response()->json($request->all());
@@ -103,8 +94,10 @@ class DimensiuneController extends Controller
     {
         abort_if(Gate::denies('dimensiune_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
+        
         $dimensiune->delete();
-
+        
+        $dimensiune->departaments()->detach();
         return back();
     }
 

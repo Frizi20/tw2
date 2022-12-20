@@ -67,6 +67,8 @@ class DepartamenteController extends Controller
 
         $departamente->delete();
 
+        $departamente->dimensions()->detach();
+
         return back();
     }
 
