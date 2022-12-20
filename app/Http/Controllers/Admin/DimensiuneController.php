@@ -73,9 +73,11 @@ class DimensiuneController extends Controller
     {
         abort_if(Gate::denies('dimensiune_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $departaments = Departamente::pluck('nume', 'id')->prepend(trans('global.pleaseSelect'), '');
+        $departaments = Departamente::pluck('nume', 'id');
 
-        $dimensiune->load('departament');
+        $dimensiune->load('departaments');
+
+        // return response()->json($dimensiune);
 
         return view('admin.dimensiunes.edit', compact('departaments', 'dimensiune'));
     }
@@ -83,6 +85,7 @@ class DimensiuneController extends Controller
     public function update(UpdateDimensiuneRequest $request, Dimensiune $dimensiune)
     {
         $dimensiune->update($request->all());
+        $dimensiune->departaments()->sync($request->input('departaments',[]));
 
         return redirect()->route('admin.dimensiunes.index');
     }

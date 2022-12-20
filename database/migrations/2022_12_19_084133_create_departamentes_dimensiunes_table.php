@@ -14,8 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::create('departamentes_dimensiunes', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+            // $table->id();
+            // $table->timestamps();
 
             $table->unsignedBigInteger('departament_id');
             $table->foreign('departament_id', 'user_id_fk_7602650')->references('id')->on('departamentes')->onDelete('cascade');

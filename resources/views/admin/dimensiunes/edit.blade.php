@@ -12,7 +12,7 @@
             @csrf
             <div class="form-group">
                 <label class="required" for="dimensiune">{{ trans('cruds.dimensiune.fields.dimensiune') }}</label>
-                <textarea class="form-control {{ $errors->has('dimensiune') ? 'is-invalid' : '' }}" name="dimensiune" id="dimensiune" required>{{ old('dimensiune', $dimensiune->dimensiune) }}</textarea>
+                <input class="form-control {{ $errors->has('dimensiune') ? 'is-invalid' : '' }}" name="dimensiune" id="dimensiune" value="{{ old('dimensiune', $dimensiune->dimensiune) }}" required>
                 @if($errors->has('dimensiune'))
                     <div class="invalid-feedback">
                         {{ $errors->first('dimensiune') }}
@@ -22,9 +22,14 @@
             </div>
             <div class="form-group">
                 <label class="required" for="departament_id">{{ trans('cruds.dimensiune.fields.departament') }}</label>
-                <select class="form-control select2 {{ $errors->has('departament') ? 'is-invalid' : '' }}" name="departament_id" id="departament_id" required>
+                <select class="form-control select2 {{ $errors->has('departament') ? 'is-invalid' : '' }}" name="departaments[]"  id="departament_id" multiple required>
                     @foreach($departaments as $id => $entry)
-                        <option value="{{ $id }}" {{ (old('departament_id') ? old('departament_id') : $dimensiune->departament->id ?? '') == $id ? 'selected' : '' }}>{{ $entry }}</option>
+                        <option value="{{ $id }}"
+                        {{-- {{ (old('departament_id') ? old('departament_id') : $dimensiune->departament->id ?? '') == $id ? 'selected' : '' }} --}}
+                        {{ (in_array($id, old('departament_id', [])) || $dimensiune->departaments->contains($id)) ? 'selected' : '' }}
+                        >
+                            {{ $entry }}
+                        </option>
                     @endforeach
                 </select>
                 @if($errors->has('departament'))

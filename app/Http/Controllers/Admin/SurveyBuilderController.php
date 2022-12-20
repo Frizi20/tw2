@@ -47,11 +47,12 @@ class SurveyBuilderController extends Controller
     {
         $departamentId = $request->depId;
 
-        $departamente = Departamente::find($departamentId);
+        $departament = Departamente::find($departamentId);
 
-        if (!$departamente) return response()->json('No departaments found', 404);
 
-        $dimensions = $departamente->dimensions->pluck('dimensiune', 'id');
+        if (!$departament) return response()->json('No departaments found', 404);
+
+        $dimensions = $departament->dimensions->pluck('dimensiune', 'id');
 
         return response()->json($dimensions);
     }
@@ -115,8 +116,9 @@ class SurveyBuilderController extends Controller
         $departament = Departamente::find($departamenteId);
         $dimensiune = $departament->dimensions->find($dimensionId);
 
+        $categoriesWithSurveys = $dimensiune->categoriiDeControl()->wherePivot('departamente_id',$departamenteId)->pluck('nume','categorie_de_controls.id');
 
-        $categoriesWithSurveys = $dimensiune->categoriiDeControl->pluck('nume', 'id');
+
 
         return response()->json($categoriesWithSurveys);
     }

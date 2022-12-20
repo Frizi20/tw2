@@ -31,14 +31,14 @@ class Departamente extends Model
         'created_by_id',
     ];
 
+    // public function dimensions()
+    // {
+    //     return $this->hasMany(Dimensiune::class,'departament_id');
+    // }
+
     public function dimensions()
     {
-        return $this->hasMany(Dimensiune::class,'departament_id');
-    }
-
-    public function dimensionss()
-    {
-        return $this->belongsToMany(Dimensiune::class, 'survey_builders','departamente_id','dimensiune_id');
+        return $this->belongsToMany(Dimensiune::class, 'departamentes_dimensiunes','departament_id','dimensiune_id');
     }
 
     public function created_by()

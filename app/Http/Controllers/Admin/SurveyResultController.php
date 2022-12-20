@@ -78,6 +78,7 @@ class SurveyResultController extends Controller
 
         $surveyIsResolvedByUser = SurveyResult::where([['user_id','=',Auth()->user()->id],['survey_builder_id','=',$request->surv_id]])->first();
 
+
         if($surveyIsResolvedByUser){
             return response()->json([
                 'status' => 'form completed'

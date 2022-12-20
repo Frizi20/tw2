@@ -17,7 +17,7 @@ class DepartamenteController extends Controller
     {
         abort_if(Gate::denies('departamente_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $departamentes = Departamente::with(['dimensionss'])->get();
+        $departamentes = Departamente::with(['dimensions'])->get();
 
         return view('admin.departamentes.index', compact('departamentes'));
     }

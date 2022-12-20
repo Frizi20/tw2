@@ -213,6 +213,8 @@
 
                 const categories = await response.json()
 
+                console.log(categories)
+
                 controlCategory.css('display','block')
 
 
@@ -370,14 +372,15 @@
 
         const data = await response.json()
 
+        console.log(data)
 
         if(!data.id){
             alert('formularul a fost deja completat!')
-            location.reload();
+            // location.reload();
 
         }
 
-        window.location.href = '/admin/survey-results'
+        // window.location.href = '/admin/survey-results'
 
 
     }

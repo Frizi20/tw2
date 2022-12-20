@@ -20,9 +20,9 @@ class UpdateDimensiuneRequest extends FormRequest
             'dimensiune' => [
                 'required',
             ],
-            'departament_id' => [
+            'departaments' => [
                 'required',
-                'integer',
+                
             ],
         ];
     }
