@@ -133,8 +133,10 @@ class SurveyBuilderController extends Controller
         $departament = Departamente::find($departamenteId);
         $dimensiune = $departament->dimensions->find($dimensionId);
 
+        //  Departamente::find(1)->dimensions()->find(2)->categoriiDeControl()->wherePivot('departamente_id',1)->get()
 
-        $categoriesWithSurveys = $dimensiune->categoriiDeControl->pluck('id')->all();
+        $categoriesWithSurveys = $dimensiune->categoriiDeControl()->wherePivot('departamente_id',$departamenteId)->pluck('categorie_de_controls.id')->all();
+        // return response()->json($categoriesWithSurveys);
         $categoriesWithoutSurveys = CategorieDeControl::whereNotIn('id', $categoriesWithSurveys)->get()->pluck('nume', 'id');
 
         return response()->json($categoriesWithoutSurveys);

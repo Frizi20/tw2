@@ -15,9 +15,9 @@ Auth::routes();
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'middleware' => ['auth']], function () {
     //Dashbord
     Route::get('/', 'HomeController@index')->name('home');
+    
     Route::get('/departaments-results','HomeController@getDepartamentsResults')->name('getDepartamentsResults');
     // Route::get('/departaments-categor');
-
     Route::get('/categories-results','HomeController@getCategoriesResults')->name('getCategoriesResults');
 
     // Permissions

@@ -3,19 +3,54 @@
 
 @section('styles')
 @parent
-    <style>
-        .dimension-surveys{
+<style>
+    .dimension-surveys {
 
-            display: flex;
-            justify-content: space-between;
-        }
+        display: flex;
+        justify-content: space-between;
+    }
 
-        .dimension-surveys > div{
-            width: 170px
-        }
+    .dimension-surveys>div {
+        width: 170px
+    }
 
+    .card-body {
+        position: relative;
+    }
 
-    </style>
+    .chart-alert {
+        top: 14px;
+        left: 10px;
+        /* border: 1px solid gray; */
+        width: 1090;
+        width: 100%;
+        left: 0;
+        toop: 0;
+        /* top: 18px; */
+        font-size: 17px;
+        font-weight: 4000;
+        color: #ff5e5e;
+        text-align: center;
+        padding-left: 10px;
+        /* border-bottom: 1px solid; */
+        top: unset;
+        padding-bottom: 10px;
+        bottom: 0;
+        border-top: 1px solid gainsboro;
+        padding: 17px;
+        position: absolute;
+        background: white;
+        display: none;
+    }
+
+    .chart-alert.active {
+        display: block;
+    }
+
+    .bar-chart-details{
+        align-self: flex-start;
+    }
+</style>
 @endsection
 
 <div class="content">
@@ -28,8 +63,8 @@
 
 
                 <div class="container col-md-12 d-flex flex-sm-row flex-column flex-wrap">
-                    <div class="col-md-6 pt-5 ">
-                        <div class="card">
+                    <div class="col-md-4 pt-5 d-flex">
+                        <div class="card flex-grow-1">
                             <div class="card-header dimension-surveys" style="height: 55px;">
                                 <h5>Completitudine dimensiuni</h5>
 
@@ -39,9 +74,10 @@
                                         class="form-control select2 {{ $errors->has('departament') ? 'is-invalid' : '' }}"
                                         name="departament_id" id="departament_id">
                                         <option value="" disabled selected>Select Departament</option>
-                                            @foreach($departaments as $id => $entry)
-                                                <option value="{{ $id }}" {{ old('departament_id')==$id ? 'selected' : '' }}>{{$entry }}</option>
-                                            @endforeach
+                                        @foreach($departaments as $id => $entry)
+                                        <option value="{{ $id }}" {{ old('departament_id')==$id ? 'selected' : '' }}>
+                                            {{$entry }}</option>
+                                        @endforeach
                                     </select>
                                     @if($errors->has('departament'))
                                     <div class="invalid-feedback">
@@ -62,8 +98,8 @@
                         </div>
                     </div>
 
-                    <div class="col-md-6 pt-5 ">
-                        <div class="card">
+                    <div class="col-md-4 pt-5 d-flex">
+                        <div class="card flex-grow-1">
                             <div class="card-header" style="height: 55px;">
                                 <h5> Completitudine categorii de control </h5>
                             </div>
@@ -76,19 +112,89 @@
                         </div>
                     </div>
 
-                    <div class="col-md-6 pt-2">
-                        <div class="card">
+                    <div class="col-md-4 pt-5 d-flex">
+                        <div class="card flex-grow-1">
                             <div class="card-header">
-                                <h5> Completitudine categorii de control </h5>
+                                <h5> Completitudine dimensiuni </h5>
                             </div>
-                            {{-- <div class="card-body">
-                                <div style="width: 800px;">
-                                    <canvas id="radar-chart-2" width="800" height="600"></canvas>
+                            <div class="card-body">
+                                <div style="">
+                                    <canvas id="radar-chart-3" width="" height=""></canvas>
                                 </div>
-                            </div> --}}
+                                <div class="chart-alert">
+                                    Date insuficiente pentru afisarea graficului
+                                </div>
+                            </div>
 
                         </div>
                     </div>
+
+                    <div class="col-md-8 d-flex">
+                        <div class="card flex-grow-1">
+                            <div class="card-header">
+                                <h5> Resurse Umane dimensiuni - completitudine & risc </h5>
+                            </div>
+                            <div class="card-body">
+                                <div style="">
+                                    <canvas id="radar-chart-4" width="" height=""></canvas>
+                                </div>
+                                <div class="chart-alert">
+                                    Date insuficiente pentru afisarea graficului
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 d-flex bar-chart-details">
+                        <div class="card flex-grow-1">
+                            {{-- <div class="card-header">
+                                <h5> Completitudine dimensiuni </h5>
+                            </div> --}}
+                            <div class="card-body">
+                                <table style="width: 100%;">
+                                    <thead>
+                                        <th>Departament</th>
+                                        <th>Completitudine</th>
+                                        <th>Risc</th>
+                                        <th>Excelenta</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Guvernanta Corporativa</td>
+                                            <td>3</td>
+                                            <td>2</td>
+                                            <td>5</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Departamente Suport</td>
+                                            <td>3</td>
+                                            <td>2</td>
+                                            <td>5</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Resurse Umane</td>
+                                            <td>3</td>
+                                            <td>2</td>
+                                            <td>5</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Financiar-Contabilitate</td>
+                                            <td>3</td>
+                                            <td>2</td>
+                                            <td>5</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="chart-alert">
+                                    Date insuficiente pentru afisarea graficului
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+
 
                 </div>
 
@@ -108,28 +214,29 @@
 
         const chartDOM1 = document.getElementById("radar-chart");
         const chartDOM2 = document.getElementById("radar-chart-2");
+        const chartDOM3 = document.getElementById("radar-chart-3");
+        const chartDOM4 = document.getElementById("radar-chart-4");
         const departamentSelect = $('#departament_id')
-
         let chart1
 
 
 
         Promise.all([
             getGraphData(1),
-            getGraphData()
+            getGraphData(),
+            getDepartamentsResultsData()
         ])
-        .then(([chartData1,chartData2])=>{
+        .then(([chartData1,chartData2,depResultsData])=>{
+
 
             processedChartData1 = processData(chartData1)
             processedChartData2 = processData(chartData2)
-
-            console.table(processedChartData1)
-            console.table(processedChartData2)
-
+            departamentsProcessedData = processDepartamentsData(depResultsData)
             //create graphs
 
             window.chart1 = createChart(chartDOM1,processedChartData1.titles,processedChartData1.values)
             createChart(chartDOM2,processedChartData2.titles,processedChartData2.values)
+            createChart(chartDOM3,departamentsProcessedData.titles,departamentsProcessedData.values)
 
         })
         .catch(error=>{
@@ -141,6 +248,8 @@
 
             const data = await getGraphData(depID)
             const processedData = processData(data)
+
+            console.log(processedData)
 
             window.chart1.data.datasets[0].data = processedData.values
 
@@ -172,15 +281,71 @@
 
         }
 
+        async function getDepartamentsResultsData() {
+
+            try {
+                const response = await fetch('/admin/departaments-results')
+
+                const resData = await response.json()
+
+                return Promise.resolve(resData)
 
 
+            } catch (error) {
 
-        function processData(data){
-            const controlCategories = Object.entries(data).map((el)=>{
+            }
+
+        }
+
+        function processDepartamentsData(data){
+            const departaments = Object.entries(data).map(el=>{
                 const [key,value] = el
                 return value
             })
 
+
+            let departamentsAnswers = []
+
+            departaments.forEach(departament =>{
+
+                const departamentsMergedSchemas = departament.survey_results.reduce((acc,curr)=>{
+                    return [...acc, ...JSON.parse(curr.schema)]
+                },[])
+
+
+                console.log(departamentsMergedSchemas)
+                departamentsAnswers.push({
+                    departamentName:departament.name,
+                    departamentsMergedSchemas
+                })
+
+            })
+
+            // console.log(departamentsAnswers)
+
+              return departamentsAnswers.map(depSurveyAnswer =>{
+                const avgScore =  depSurveyAnswer.departamentsMergedSchemas.reduce((acc,curr,_,arr)=>{
+                    return acc + Number(curr.value) / arr.length
+                },0)
+
+                return {
+                    departamentName:depSurveyAnswer.departamentName,
+                    avg:avgScore
+                }
+            }).reduce((acc,curr) =>{
+                const currTitle = {titles:[...acc.titles,curr.departamentName]}
+                const currVal =    {values:[...acc.values,curr.avg]}
+                return {...currTitle, ...currVal}
+            }, {titles:[],values:[]})
+        }
+
+        function processData(data){
+
+
+            const controlCategories = Object.entries(data).map((el)=>{
+                const [key,value] = el
+                return value
+            })
 
             let categoriesSurveyAnswers = []
 
@@ -191,12 +356,18 @@
                     return [...acc, ...JSON.parse(curr.schema)]
                 },[])
 
+
+
                 categoriesSurveyAnswers.push({
                     categoryName: category.name,
                     categoryMergedSchemas
                 })
 
             });
+
+            // console.log(categoriesSurveyAnswers)
+
+
 
             return categoriesSurveyAnswers.map(catSurveyAnswer =>{
 
@@ -221,6 +392,13 @@
 
 
         function createChart(chartDOMLocation, titles, values){
+
+          console.log(titles.length)
+          if(titles.length <3){
+            chartDOMLocation.parentElement.parentElement.querySelector('.chart-alert').classList.add('active')
+            return
+          }
+
           const chartInstance = new Chart(chartDOMLocation, {
                 type: 'radar',
                 data: {
@@ -287,7 +465,43 @@
 
             return chartInstance
         }
+
+
+
+        new Chart(chartDOM4, {
+            type: 'bar',
+            data: {
+                labels: ["Guvernanta Corporativa", "Departamente Suport", "Resurse Umane", "Financiar-Contabilitate"],
+                datasets: [{
+                        label: "Completitudine",
+                        type: "bar",
+                        borderColor: "#36a2eb",
+                        backgroundColor:'blue',
+                        data: [408,547,675,734],
+                        fill: false
+                    }, {
+                        label: "Risc",
+                        type: "bar",
+                        backgroundColor:'#ff6565',
+                        borderColor: "#ff6384",
+                        data: [133,221,783,2478],
+                        fill: false
+                    }
+                ]
+                },
+                options: {
+                title: {
+                    display: true,
+                    text: 'Population growth (millions): Europe & Africa'
+                },
+                legend: { display: true }
+                }
+            });
     }
+
+
+
+
 
     init()
 

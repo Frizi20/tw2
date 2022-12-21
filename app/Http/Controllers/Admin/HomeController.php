@@ -61,7 +61,7 @@ class HomeController
 			->orderBy('cat_id')
 			->get();
 
-
+        // return response()->json($categories);
 
 
 		$data = [];
@@ -88,19 +88,58 @@ class HomeController
 		return response()->json($data);
 	}
 
+
 	public function getDepartamentsResults()
 	{
 		$departaments = DB::table('departamentes')
 			->select([
 				'departamentes.*',
-				'departamentes.id as dep_id'
+                'sr.id as sr_id',
+				'departamentes.id as dep_id',
+                'dim.*',
+                'sr.*'
 			])
+            ->leftJoin('survey_builders as sb', function ($join)  {
+				$join->on('sb.departamente_id', '=', 'departamentes.id');
+
+				// Get results by depatament
+				// if($depId){
+				// 	$join->where('sb.departamente_id','=', $depId);
+				// }
+			})
+            ->leftJoin('survey_results as sr', function ($join)  {
+				$join->on('sr.survey_builder_id', '=', 'sb.id');
+
+
+				// Get results by user
+                // $join->where('sr.user_id', '=', Auth::user()->id);
+			})
 			->whereNull('departamentes.deleted_at')
 			->leftJoin('dimensiunes as dim', 'dim.id', '=', 'departamentes.id')
 			->get();
 
+            $data = [];
 
-		return response()->json($departaments);
+            foreach ($departaments as $departament) {
+
+                if (!isset($data[$departament->dep_id])) {
+                    $data[$departament->dep_id] = [
+                        'id'             => $departament->dep_id,
+                        'name'            => $departament->nume,
+                        'survey_results' => []
+                    ];
+                }
+
+                if ($departament->sr_id) {
+                    $data[$departament->dep_id]['survey_results'][] = [
+                        'id' => $departament->sr_id,
+                        'schema' => $departament->schema_results,
+                        // 'user_name'  => $departament->user_name
+                    ];
+                }
+            }
+
+		return response()->json($data);
 	}
 
 }
