@@ -271,10 +271,17 @@
             if(!response.ok) throw new Error('Survey builder could not be fetched')
             const data = await response.json()
 
-            console.log(data)
 
-
+            if(data.status == 'pending'){
+                alert(data.message)
+                return false
+            }
             //check if form builder is allowed for this user
+
+            if(data.status == 'resolved'){
+                alert(data.message)
+                return false
+            }
 
             if(!data.id) return false
 
@@ -297,7 +304,7 @@
         }
 
         if(!schema) {
-            alert('formularul a fost deja completat!')
+            // alert('formularul a fost deja completat!')
             multiPartWrapper.css('display','none')
             return
         }
@@ -375,7 +382,7 @@
         console.log(data)
 
         if(!data.id){
-            alert('formularul a fost deja completat!')
+            // alert('formularul a fost deja completat!')
             // location.reload();
 
         }

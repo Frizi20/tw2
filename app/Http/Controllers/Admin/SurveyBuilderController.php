@@ -9,18 +9,31 @@ use App\Http\Requests\UpdateSurveyBuilderRequest;
 use App\Models\CategorieDeControl;
 use App\Models\Departamente;
 use App\Models\Dimensiune;
+use App\Models\SessionModel;
 use App\Models\SurveyBuilder;
 use Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use stdClass;
 use Symfony\Component\HttpFoundation\Response;
+
+use function PHPUnit\Framework\isEmpty;
 
 class SurveyBuilderController extends Controller
 {
     public function index()
     {
         abort_if(Gate::denies('survey_builder_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        // $sessionId = Session::getId();
+        // $session = SessionModel::where('user_id','=',Auth::user()->id)->where('id','!=',$sessionId)->first();
+        // // return response()->json($session);
+        // if($session){
+        //     return response()->json('same user is already here');
+        // }
+
+        // return response()->json('poti');
 
         $surveyBuilders = SurveyBuilder::with(['departamente', 'categorie_de_control', 'dimensiuni'])->get();
 
@@ -60,7 +73,39 @@ class SurveyBuilderController extends Controller
 
     public function getSurveyBuilder(Request $request)
     {
+        $overlaping = false;
+        $urlPath = $request->path();
         $user_id = Auth::user()->id;
+        $session_id = Session::getId();
+        $surveyPath = '' .$request->dim_id . $request->dep_id . $request->cat_id;
+
+        Session::put('survey_result',$surveyPath);
+
+        $sameAuthUsersSessions = SessionModel::where('user_id','=',$user_id)->where('id','!=',$session_id)->get();
+
+        foreach ($sameAuthUsersSessions as $key=>$session ) {
+            # code...
+            $payload = unserialize(base64_decode($session->payload));
+            // return response()->json($payload);
+            if(isset($payload['survey_result'])){
+                $otherUserSurveyPath = $payload['survey_result'];
+                if($otherUserSurveyPath && $otherUserSurveyPath == $surveyPath){
+                    $overlaping = true;
+                }
+            }
+
+
+        //    return response()->json();
+        }
+
+        if($overlaping){
+            return response()->json([
+                'status'=>'pending',
+                'message' => 'Work in progress!'
+            ]);
+        }
+
+
 
         //return array with surveyBuilder and with the general questions of that builder
         $sb = SurveyBuilder::where([
@@ -78,7 +123,8 @@ class SurveyBuilderController extends Controller
 
         if ($surveyHasResultsForUser) {
             return response()->json([
-                'status' => 'form completed'
+                'status' => 'resolved',
+                'message' => 'Survey was resolved'
             ]);
         }
 
