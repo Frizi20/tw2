@@ -21,12 +21,6 @@ html {
   justify-content: center;
 }
 
-.multi-form-container {
-  /* height: 300px; */
-  width: 500px;
-  background: white;
-  
-}
 
 .multi-form-container {
   padding: 20px;
@@ -36,6 +30,7 @@ html {
   border: 1px solid #aaaaaa;
   width: 100%;
   border-radius: 5px;
+  position: relative;
 }
 
 .progress-bar-container {
@@ -54,7 +49,7 @@ html {
   background: #f1f1f1;
   border-radius: 10px;
 
-  height: 5px;
+  height: 8px;
   /* margin: 50px 0px; */
   position: relative;
   /* relative here */
@@ -93,8 +88,78 @@ html {
 
 .multi-form-container .slider {
   position: relative;
-  min-height: 180px;
+  min-height: 380px;
   overflow: hidden;
+}
+
+.multi-form-container .recommendation-container{
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    height: 100%;
+    background: #f8f8f8;
+    width: 100%;
+    filter: blur(-2.2px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    /* position: absolute;
+    height: 100%;
+    width: 100%;
+    background: rebeccapurple;
+    justify-content: center; */
+}
+
+.multi-form-container .recommendation-container .recommendation{
+    padding: 10px;
+    border-radius: 5px;
+    padding: 24px 16px;
+    /* background: red; */
+    /* border: 1px solid; */
+    width: 460px;
+    background: white;
+    box-shadow: 0 0 15px 0 rgb(34 41 47 / 5%);
+}
+
+.multi-form-container .recommendation-container .recommendation-title{
+    font-size: 16px;
+    font-weight: 400;
+    background: white;
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 18px;
+    font-weight: 500;
+    color: #0070bb;
+
+}
+.multi-form-container .recommendation-container textarea{
+    border-color: white;
+    width: 100%;
+    resize: none;
+    padding: 10px;
+    border: 1px solid #d8d6de;
+}
+
+.multi-form-container .recommendation-container textarea:focus{
+    border: 1.2px solid #d8d6de;
+    border-radius: 5px;
+}
+
+.multi-form-container .recommendation-container .btn-container{
+    display: block;
+    text-align: center;
+}
+
+.multi-form-container .recommendation-container .btn{
+    cursor: pointer;
+    outline: 1px solid #63a2cb;
+    padding: 1px 23px;
+    user-select: none;
+    color: #0070bb;
+    font-size: 15px;
+    margin-top: 9px;
 }
 
 .multi-form-container fieldset {
@@ -126,6 +191,10 @@ html {
   flex-direction: column;
 }
 
+.fs-input .answer-options{
+    width: 100%;
+}
+
 .fs-input select {
   width: 100%;
   padding: 4px;
@@ -145,7 +214,86 @@ html {
   appearance: none;
   /* border-radius: 0.375rem; */
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  border-width: 2px;
+  border-radius: 4px;
 }
+
+.fs-input .unapplicable{
+        /* margin-top: 20px; */
+    /* margin-right: auto; */
+    display: block;
+    /* position: absolute; */
+    left: 0;
+    /* bottom: 0; */
+    margin-left: auto;
+    top: 0;
+    font-size: 15px;
+    margin-top: 20px;
+    font-weight: 500;
+    color: var(--gray);
+    /* display: flex; */
+    /* align-items: baseline; */
+    /* justify-content: center; */
+    margin-right: 4px;
+    border: 1px solid #a5a5a5;
+    padding: 5ppx 10px;
+    padding: 3px 5px;
+    color: white;
+    border-radius: 5px;
+    color: #386c8f;
+    user-select: none;
+    /* background: #df4c4cde; */
+    font-weight: 500;
+    cursor: pointer;
+}
+
+
+
+.fs-input .remarks{
+    width: 100%;
+    margin-top: 20px;
+    /* height: 20px; */
+}
+
+.fs-input .remarks label,
+.fs-input .answer-label{
+    font-size: 16px;
+    padding-left: 5px;
+    font-weight: 500;
+    color: var(--gray);
+}
+
+.fs-input .remarks textarea{
+    margin-top: 0;
+    border-color: #ced4da;
+    border-width: 2px;
+    border-radius: 4px;
+}
+
+.fs-input textarea{
+    width: 100%;
+    margin-top: 20px;
+    min-height: 80px;
+    max-height: 80px;
+    padding: 10px;
+}
+
+.fs-input .unapplicable label{
+    margin-right: 5px;
+    margin-bottom: 0;
+}
+
+.fs-input .unapplicable input{
+    position: relative;
+    top: 1.5px;
+}
+
+.fs-input .remarks textarea:focus,
+.fs-input select:focus{
+    outline-color: var(--gray);
+}
+
+
 
 .fs-input .error {
   padding: 6px 0;
@@ -174,11 +322,12 @@ html {
 }
 
 .form-buttons div {
-  cursor: pointer;
-  outline: 1px solid #63a2cb;
-  padding: 3px 8px;
-  user-select: none;
-  color: #0070bb;
+    cursor: pointer;
+    outline: 1px solid #63a2cb;
+    padding: 2px 50px;
+    user-select: none;
+    color: #0070bb;
+    font-size: 16px;
 }
 
 .form-buttons div:hover{

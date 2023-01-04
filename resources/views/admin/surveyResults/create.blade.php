@@ -90,7 +90,6 @@
                         <div class="progress-bar-indicator"></div>
                     </div>
                     <div class="slider">
-
                         {{-- <fieldset>
                             <div class="fs-title">Intrebarea 4</div>
                             <div class="fs-subtitle">
@@ -108,13 +107,27 @@
 
                             </div>
                         </fieldset> --}}
-
                     </div>
                     <div class="form-buttons">
                         <div class="prev-btn">Prev</div>
                         <div class="next-btn">Next</div>
                         <div class="send-btn hide">Send</div>
                         {{-- <div class="-btn"></div> --}}
+                    </div>
+                    <div class="recommendation-container">
+                        <div class="recommendation">
+
+                            <div class="recommendation-title">Adauga recomandare</div>
+
+                            <textarea name="" id=""  rows="5">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Doloribus excepturi voluptatem exercitationem? Est suscipit maxime non sed tenetur, porro ipsum, officia nihil obcaecati delectus fugit consequuntur, nobis amet aut neque.
+                            </textarea>
+
+                            <div class="btn-container">
+                                <div class="btn">Save</div>
+                            </div>
+
+                        </div>
+
                     </div>
                 </div>
 
@@ -135,7 +148,6 @@
 @section('scripts')
 @parent
 <script>
-
     const dimensions = $('.dimensions')
     const controlCategory = $('.control-category')
     const departamentSelect = $('#departament_id')
@@ -251,8 +263,6 @@
 
      async function getFormSchema() {
 
-
-
         try {
             const response = await fetch('/admin/survey-builders/get-survey-builder', {
                 method: 'POST',
@@ -362,8 +372,13 @@
 
     }
 
+
+    //Save survey result
     async function sendSurveyResult(schema){
 
+        console.log(JSON.parse(schema))
+
+        return
         const response = await fetch('/admin/survey-results/store-survey-result', {
                 method: 'POST',
                 headers: {
