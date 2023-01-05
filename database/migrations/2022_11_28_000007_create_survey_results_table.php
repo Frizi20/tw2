@@ -10,7 +10,7 @@ class CreateSurveyResultsTable extends Migration
     {
         Schema::create('survey_results', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('schema_results')->nullable();
+            $table->text('schema_results')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

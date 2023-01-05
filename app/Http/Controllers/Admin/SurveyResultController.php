@@ -50,7 +50,7 @@ class SurveyResultController extends Controller
         // ->get();
 
 
-        // return response()->json($surveyResults);
+        // return response()->json($surveyResults); 
 
 
         return view('admin.surveyResults.index', compact('surveyResults'));

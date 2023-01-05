@@ -121,6 +121,7 @@ class SurveyBuilder {
     createdFieldsDOM = [];
     allowNext = false;
     sendSurveyCallback;
+    surveyRecommendation = '';
 
     // canSkip;
 
@@ -135,18 +136,53 @@ class SurveyBuilder {
         // this.nrQuestions = this.fields.length
         this.updateProgressBar();
 
+        this.recommendationContainer = document.querySelector(
+            '.recommendation-container'
+        );
+
+        console.log(this.recommendationContainer)
+
+        this.closeRecommendation = document.querySelector(
+            '.close-recommendation-modal'
+        );
+        this.recommendation = document.querySelector(
+            '.recommendation-container textarea'
+        );
+
+        this.sendBtn = document.querySelector('.recommendation-container .btn');
         this.sendBtnDOM = document.querySelector('.form-buttons .send-btn');
         this.formBtns = document.querySelector('.form-buttons');
 
         this.bindedAddEvents = (e) => {
             if (e.target.className.includes('next-btn')) this.nextQuestion(e);
             if (e.target.className.includes('prev-btn')) this.prevQuestion(e);
-            if (e.target.className.includes('send-btn')) this.sendSurvey(e);
+            // if (e.target.className.includes('send-btn')) this.sendSurvey(e);
         };
 
         this.formBtns.addEventListener('click', this.bindedAddEvents);
 
-        console.log(this.fields);
+        this.bindedUpdateRecommendation = this.updateRecommendation.bind(this);
+        this.bindedSendSurvey = this.sendSurvey.bind(this);
+        this.bindedCloseModal = this.closeModal.bind(this)
+
+        this.recommendation.addEventListener(
+            'change',
+            this.bindedUpdateRecommendation
+        );
+        this.sendBtn.addEventListener('click', this.bindedSendSurvey);
+        this.closeRecommendation.addEventListener('click', this.bindedCloseModal);
+    }
+
+    updateRecommendation(e) {
+        this.surveyRecommendation = e.target.value;
+    }
+
+    closeModal(e) {
+        // console.log(
+        //     document.querySelector('.recommendation-container'),
+        //     this.recommendationContainer
+        // )
+        this.recommendationContainer.classList.remove('active');
     }
 
     createAllFields() {
@@ -325,7 +361,12 @@ class SurveyBuilder {
             }
         }
 
-        this.sendSurveyCallback(JSON.stringify(this.outputSchema));
+        this.sendSurveyCallback(
+            JSON.stringify({
+                recommendation: this.surveyRecommendation,
+                fields: this.outputSchema
+            })
+        );
     }
 
     nextQuestion(e) {
@@ -353,13 +394,16 @@ class SurveyBuilder {
         }
 
         //Stop moving to the next question when we're at the last one
-        if (this.currQuestion >= this.nrQuestions - 1) return;
+        if (this.currQuestion >= this.nrQuestions - 1) {
+            this.recommendationContainer.classList.add('active');
+            return;
+        }
 
         //Show SEND button and hide NEXT for the last question
-        if (this.currQuestion >= this.nrQuestions - 2) {
-            nextBtn.classList.add('hide');
-            this.sendBtnDOM.classList.remove('hide');
-        }
+        // if (this.currQuestion >= this.nrQuestions - 2) {
+        //     nextBtn.classList.add('hide');
+        //     this.sendBtnDOM.classList.remove('hide');
+        // }
 
         //prevent next question to be skipped
         // this.canSkip = false;
@@ -405,6 +449,14 @@ class SurveyBuilder {
     reset() {
         this.createdFieldsDOM.forEach((domEl) => domEl.remove());
         this.formBtns.removeEventListener('click', this.bindedAddEvents);
+
+        this.recommendation.removeEventListener(
+            'change',
+            this.bindedUpdateRecommendation
+        );
+        this.sendBtn.removeEventListener('click', this.bindedSendSurvey);
+        this.closeRecommendation.removeEventListener('click', this.bindedCloseModal);
+
         nextBtn.classList.remove('hide');
         this.sendBtnDOM.classList.add('hide');
     }

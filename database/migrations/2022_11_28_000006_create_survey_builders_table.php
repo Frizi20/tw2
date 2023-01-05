@@ -10,7 +10,7 @@ class CreateSurveyBuildersTable extends Migration
     {
         Schema::create('survey_builders', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('schema')->nullable();
+            $table->text('schema')->nullable();
             $table->boolean('generala')->default(0)->nullable();
             $table->timestamps();
             $table->softDeletes();

@@ -104,12 +104,19 @@ html {
     display: flex;
     align-items: center;
     justify-content: center;
+    display: none;
 
     /* position: absolute;
     height: 100%;
     width: 100%;
     background: rebeccapurple;
     justify-content: center; */
+}
+
+
+
+.multi-form-container .recommendation-container.active{
+    display: flex;
 }
 
 .multi-form-container .recommendation-container .recommendation{
@@ -121,7 +128,22 @@ html {
     width: 460px;
     background: white;
     box-shadow: 0 0 15px 0 rgb(34 41 47 / 5%);
+    position: relative;
 }
+
+.multi-form-container .recommendation-container .close-recommendation-modal{
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+
+.multi-form-container .recommendation-container .close-recommendation-modal i{
+    font-size: 19px;
+    cursor: pointer;
+    color: #fe5353;
+
+}
+
 
 .multi-form-container .recommendation-container .recommendation-title{
     font-size: 16px;
@@ -142,8 +164,8 @@ html {
     border: 1px solid #d8d6de;
 }
 
-.multi-form-container .recommendation-container textarea:focus{
-    border: 1.2px solid #d8d6de;
+.multi-form-container .recommendation-container textarea:focus-visible{
+    outline: 1px solid #b8b8b8;
     border-radius: 5px;
 }
 
@@ -160,6 +182,11 @@ html {
     color: #0070bb;
     font-size: 15px;
     margin-top: 9px;
+}
+
+.multi-form-container .recommendation-container .btn:hover{
+    background-color: #dbebf4;
+
 }
 
 .multi-form-container fieldset {

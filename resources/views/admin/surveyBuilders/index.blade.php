@@ -72,9 +72,16 @@
                                 {{ $surveyBuilder->categorie_de_control->nume ?? '' }}
                             </td>
                             <td>
-                               @foreach ( json_decode($surveyBuilder->schema)->fields as $schema  )
+                               {{-- @foreach ( json_decode($surveyBuilder->schema)->fields as $schema  )
                                     <span style="background-color:#2eb85c;color:#fff;border-radius:5px;padding:5px;font-size:12px;cursor:ponter;">{{$schema->title}}</span>
-                               @endforeach
+                                @endforeach --}}
+
+                                        <span style="background-color:#2eb85c;color:#fff;border-radius:5px;padding:5px 10px;font-size:12px;cursor:ponter;margin-left:20px;">
+                                            {{count(json_decode($surveyBuilder->schema)->fields)}}
+                                        </span>
+
+                                        
+
                             </td>
                             <td>
                                 <span style="display:none">{{ $surveyBuilder->generala ?? '' }}</span>

@@ -115,7 +115,7 @@ class SurveyBuilder {
 
     element.parentElement.insertBefore(dummyDiv, element.nextElementSibling)
 
-    // set dragged element to his inital position by fixed perspective
+    // Set dragged element to his inital position by fixed perspective
     Object.assign(element.style, {
       position: 'fixed',
       width: `${width}px`,

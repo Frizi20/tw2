@@ -47,7 +47,7 @@
         display: block;
     }
 
-    .bar-chart-details{
+    .bar-chart-details {
         align-self: flex-start;
     }
 </style>
@@ -91,7 +91,10 @@
                             </div>
                             <div class="card-body">
                                 <div style="">
-                                    <canvas id="radar-chart" width="800" height="600"></canvas>
+                                    <canvas id="radar-chart" width="800" height="400"></canvas>
+                                </div>
+                                <div class="chart-alert">
+                                    Date insuficiente pentru afisarea graficului
                                 </div>
                             </div>
 
@@ -105,7 +108,10 @@
                             </div>
                             <div class="card-body">
                                 <div style="">
-                                    <canvas id="radar-chart-2" width="800" height="600"></canvas>
+                                    <canvas id="radar-chart-2" width="800" height="400"></canvas>
+                                </div>
+                                <div class="chart-alert">
+                                    Date insuficiente pentru afisarea graficului
                                 </div>
                             </div>
 
@@ -119,7 +125,58 @@
                             </div>
                             <div class="card-body">
                                 <div style="">
-                                    <canvas id="radar-chart-3" width="" height=""></canvas>
+                                    <canvas id="radar-chart-3" width="" height="400"></canvas>
+                                </div>
+                                <div class="chart-alert">
+                                    Date insuficiente pentru afisarea graficului
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 pt-5 d-flex">
+                        <div class="card flex-grow-1">
+                            <div class="card-header">
+                                <h5> Completitudine dimensiuni </h5>
+                            </div>
+                            <div class="card-body">
+                                <div style="">
+                                    <canvas id="radar-chart-risk-1" width="" height="400"></canvas>
+                                </div>
+                                <div class="chart-alert">
+                                    Date insuficiente pentru afisarea graficului
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 pt-5 d-flex">
+                        <div class="card flex-grow-1">
+                            <div class="card-header">
+                                <h5> Completitudine dimensiuni </h5>
+                            </div>
+                            <div class="card-body">
+                                <div style="">
+                                    <canvas id="radar-chart-risk-2" width="" height="400"></canvas>
+                                </div>
+                                <div class="chart-alert">
+                                    Date insuficiente pentru afisarea graficului
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 pt-5 d-flex">
+                        <div class="card flex-grow-1">
+                            <div class="card-header">
+                                <h5> Completitudine dimensiuni </h5>
+                            </div>
+                            <div class="card-body">
+                                <div style="">
+                                    <canvas id="radar-chart-risk-3" width="" height=""></canvas>
                                 </div>
                                 <div class="chart-alert">
                                     Date insuficiente pentru afisarea graficului
@@ -215,6 +272,11 @@
         const chartDOM1 = document.getElementById("radar-chart");
         const chartDOM2 = document.getElementById("radar-chart-2");
         const chartDOM3 = document.getElementById("radar-chart-3");
+
+        const chartRiskDOM1 = document.getElementById("radar-chart-risk-1")
+        const chartRiskDOM2 = document.getElementById("radar-chart-risk-2")
+        const chartRiskDOM3 = document.getElementById("radar-chart-risk-3")
+
         const chartDOM4 = document.getElementById("radar-chart-4");
         const departamentSelect = $('#departament_id')
         let chart1
@@ -229,10 +291,14 @@
         .then(([chartData1,chartData2,depResultsData])=>{
 
 
+
+
             processedChartData1 = processData(chartData1)
             processedChartData2 = processData(chartData2)
             departamentsProcessedData = processDepartamentsData(depResultsData)
             //create graphs
+
+            console.log(departamentsProcessedData)
 
             window.chart1 = createChart(chartDOM1,processedChartData1.titles,processedChartData1.values)
             createChart(chartDOM2,processedChartData2.titles,processedChartData2.values)
@@ -269,6 +335,7 @@
 
                 const data = await response.json()
 
+
                 return Promise.resolve(data)
                 // const categoryGraph = processData(data)
 
@@ -298,22 +365,24 @@
         }
 
         function processDepartamentsData(data){
+            // console.log(data)
+
             const departaments = Object.entries(data).map(el=>{
                 const [key,value] = el
                 return value
             })
 
+            console.log(departaments)
 
             let departamentsAnswers = []
 
             departaments.forEach(departament =>{
 
                 const departamentsMergedSchemas = departament.survey_results.reduce((acc,curr)=>{
-                    return [...acc, ...JSON.parse(curr.schema)]
-                },[])
+                    return [...acc, ...JSON.parse(curr.schema).fields]
+                },[]).filter(field => field?.notApplicable !== true)
 
 
-                console.log(departamentsMergedSchemas)
                 departamentsAnswers.push({
                     departamentName:departament.name,
                     departamentsMergedSchemas
@@ -321,7 +390,7 @@
 
             })
 
-            // console.log(departamentsAnswers)
+
 
               return departamentsAnswers.map(depSurveyAnswer =>{
                 const avgScore =  depSurveyAnswer.departamentsMergedSchemas.reduce((acc,curr,_,arr)=>{
@@ -341,11 +410,16 @@
 
         function processData(data){
 
+            // console.log(
+            //     data
+            // )
 
             const controlCategories = Object.entries(data).map((el)=>{
                 const [key,value] = el
                 return value
             })
+
+            // console.log(controlCategories)
 
             let categoriesSurveyAnswers = []
 
@@ -353,9 +427,10 @@
                 // let mergedSchemas = []
 
                 const categoryMergedSchemas =  category.survey_results.reduce((acc,curr)=>{
-                    return [...acc, ...JSON.parse(curr.schema)]
-                },[])
+                    return [...acc, ...JSON.parse(curr.schema).fields]
+                },[]).filter(field => field?.notApplicable !== true)
 
+                // console.log(categoryMergedSchemas)
 
 
                 categoriesSurveyAnswers.push({
@@ -365,7 +440,9 @@
 
             });
 
-            // console.log(categoriesSurveyAnswers)
+
+
+            console.log(categoriesSurveyAnswers)
 
 
 
@@ -392,9 +469,8 @@
 
 
         function createChart(chartDOMLocation, titles, values){
-
-          console.log(titles.length)
-          if(titles.length <3){
+          console.log(chartDOMLocation)
+          if(true){
             chartDOMLocation.parentElement.parentElement.querySelector('.chart-alert').classList.add('active')
             return
           }
@@ -498,10 +574,6 @@
                 }
             });
     }
-
-
-
-
 
     init()
 

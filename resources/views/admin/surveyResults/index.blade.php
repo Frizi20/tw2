@@ -67,10 +67,18 @@
                                 {{ $surveyResult->user->name ?? '' }}
                             </td> --}}
                             <td>
-                                @foreach (json_decode($surveyResult->schema_results) as $key => $result  )
+                                {{-- @foreach (json_decode($surveyResult->schema_results) as $key => $result  )
                                 <span style="background-color:#2eb85c;color:#fff;border-radius:5px;padding:5px;font-size:12px;font-weight:500;cursor: pointer;">
                                     {{$result->title}}</span>
-                                @endforeach
+                                    @endforeach --}}
+                                    <span style="background-color:#2eb85c;color:#fff;border-radius:5px;padding:5px 10px;font-size:12px;font-weight:500;cursor: pointer;margin-left:20px;">
+                                       @if (isset(json_decode($surveyResult->schema_results)->fields))
+                                            {{ count(json_decode($surveyResult->schema_results)->fields)}}
+                                         @else
+                                            {{ count(json_decode($surveyResult->schema_results)) }}
+                                       @endif
+                                    </span>
+
                             </td>
                             <td>
                                 @can('survey_result_show')

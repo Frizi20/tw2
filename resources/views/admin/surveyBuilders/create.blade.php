@@ -348,7 +348,7 @@
             return
         }
 
-       
+
 
         const response = await fetch('/admin/survey-builders/store-survey', {
                 method: 'POST',
@@ -363,7 +363,7 @@
             const resData = await response.json();
 
 
-            // window.location.href = '/admin/survey-builders'
+            window.location.href = '/admin/survey-builders'
 
 
             if(resData.status === 'ok'){

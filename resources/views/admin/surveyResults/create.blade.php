@@ -117,9 +117,13 @@
                     <div class="recommendation-container">
                         <div class="recommendation">
 
+                            <div class="close-recommendation-modal">
+                                <i class="fa fa-times-circle" aria-hidden="true"></i>
+                            </div>
+
                             <div class="recommendation-title">Adauga recomandare</div>
 
-                            <textarea name="" id=""  rows="5">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Doloribus excepturi voluptatem exercitationem? Est suscipit maxime non sed tenetur, porro ipsum, officia nihil obcaecati delectus fugit consequuntur, nobis amet aut neque.
+                            <textarea name="" id=""  rows="5" spellcheck="false">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Doloribus excepturi voluptatem exercitationem? Est suscipit   maxime non sed tenetur, porro ipsum, officia nihil obcaecati delectus fugit consequuntur, nobis amet aut neque.
                             </textarea>
 
                             <div class="btn-container">
@@ -376,9 +380,6 @@
     //Save survey result
     async function sendSurveyResult(schema){
 
-        console.log(JSON.parse(schema))
-
-        return
         const response = await fetch('/admin/survey-results/store-survey-result', {
                 method: 'POST',
                 headers: {
@@ -402,7 +403,7 @@
 
         }
 
-        // window.location.href = '/admin/survey-results'
+        window.location.href = '/admin/survey-results'
 
 
     }
