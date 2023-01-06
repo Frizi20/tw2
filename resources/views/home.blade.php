@@ -135,7 +135,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-4 pt-5 d-flex">
+                    <div class="col-md-4 pt-3 d-flex">
                         <div class="card flex-grow-1">
                             <div class="card-header">
                                 <h5> Completitudine dimensiuni </h5>
@@ -152,7 +152,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-4 pt-5 d-flex">
+                    <div class="col-md-4 pt-3 d-flex">
                         <div class="card flex-grow-1">
                             <div class="card-header">
                                 <h5> Completitudine dimensiuni </h5>
@@ -169,7 +169,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-4 pt-5 d-flex">
+                    <div class="col-md-4 pt-3 d-flex">
                         <div class="card flex-grow-1">
                             <div class="card-header">
                                 <h5> Completitudine dimensiuni </h5>
@@ -286,23 +286,33 @@
         Promise.all([
             getGraphData(1),
             getGraphData(),
-            getDepartamentsResultsData()
+            getDepartamentsResultsData(),
+            getDimensionsResultsData()
         ])
-        .then(([chartData1,chartData2,depResultsData])=>{
+        .then(([chartData1,chartData2,depResultsData, dimResultsData])=>{
 
-
-
-
-            processedChartData1 = processData(chartData1)
-            processedChartData2 = processData(chartData2)
-            departamentsProcessedData = processDepartamentsData(depResultsData)
+            const processedLineGraphData = processData(dimResultsData)
+            const processedChartData1 = processData(chartData1)
+            const processedChartData2 = processData(chartData2)
+            const departamentsProcessedData = processDepartamentsData(depResultsData)
             //create graphs
+			const revertChart1 = revertProcessedData(processedChartData1)
+			const revertChart2 = revertProcessedData(processedChartData2)
+			const revertChart3 = revertProcessedData(departamentsProcessedData)
 
-            console.log(departamentsProcessedData)
+
 
             window.chart1 = createChart(chartDOM1,processedChartData1.titles,processedChartData1.values)
             createChart(chartDOM2,processedChartData2.titles,processedChartData2.values)
             createChart(chartDOM3,departamentsProcessedData.titles,departamentsProcessedData.values)
+
+			createChart(chartRiskDOM1,revertChart1.titles,revertChart1.values, true)
+			createChart(chartRiskDOM2,revertChart2.titles,revertChart2.values, true)
+			createChart(chartRiskDOM3,revertChart3.titles,revertChart3.values, true)
+
+            createLineChart(processedLineGraphData)
+
+
 
         })
         .catch(error=>{
@@ -348,6 +358,23 @@
 
         }
 
+        async function getDimensionsResultsData() {
+
+            try {
+
+                const response = await fetch('/admin/dimensions-results')
+
+                const resData = response.json()
+
+                return Promise.resolve(resData)
+
+
+            } catch (error) {
+                Promise.reject(error)
+            }
+
+        }
+
         async function getDepartamentsResultsData() {
 
             try {
@@ -372,7 +399,6 @@
                 return value
             })
 
-            console.log(departaments)
 
             let departamentsAnswers = []
 
@@ -391,7 +417,6 @@
             })
 
 
-
               return departamentsAnswers.map(depSurveyAnswer =>{
                 const avgScore =  depSurveyAnswer.departamentsMergedSchemas.reduce((acc,curr,_,arr)=>{
                     return acc + Number(curr.value) / arr.length
@@ -407,6 +432,14 @@
                 return {...currTitle, ...currVal}
             }, {titles:[],values:[]})
         }
+
+		function revertProcessedData(data){
+			const clonedData = JSON.parse(JSON.stringify(data))
+			const reversedValues = clonedData.values.map(value => value === 0 || !value ? 0 : 6 - value )
+
+			clonedData.values = reversedValues
+			return clonedData
+		}
 
         function processData(data){
 
@@ -442,12 +475,7 @@
 
 
 
-            console.log(categoriesSurveyAnswers)
-
-
-
-            return categoriesSurveyAnswers.map(catSurveyAnswer =>{
-
+            const avgs = categoriesSurveyAnswers.map(catSurveyAnswer =>{
 
                 const avgSore =  catSurveyAnswer.categoryMergedSchemas.reduce((acc,curr,_,arr)=>{
                     return acc + Number(curr.value) / arr.length
@@ -457,7 +485,10 @@
                     categoryName:catSurveyAnswer.categoryName,
                     avg:avgSore
                 }
-            }).reduce((acc,curr) =>{
+            })
+
+
+			return avgs.reduce((acc,curr) =>{
                 const currTitle = {titles:[...acc.titles,curr.categoryName]}
                 const currVal =    {values:[...acc.values,curr.avg]}
                 return {...currTitle, ...currVal}
@@ -468,9 +499,9 @@
 
 
 
-        function createChart(chartDOMLocation, titles, values){
-          console.log(chartDOMLocation)
-          if(true){
+        function createChart(chartDOMLocation, titles, values, reversed = false){
+
+          if(titles.length <= 2){
             chartDOMLocation.parentElement.parentElement.querySelector('.chart-alert').classList.add('active')
             return
           }
@@ -482,10 +513,10 @@
                 datasets: [
                         {
                             fill: true,
-                            backgroundColor: "rgba(179,181,198,0.2)",
-                            borderColor: "rgba(179,181,198,1)",
+                            backgroundColor: reversed ? "rgba(255, 99, 132, 0.2)" : "#d7ecfb80",
+                            borderColor: reversed ? "#ff6262e0" : '#5e95d6',
                             pointBorderColor: "#fff",
-                            pointBackgroundColor: "rgba(179,181,198,1)",
+                            pointBackgroundColor: reversed ? "#ff6384" : "#5e95d6",
                             data: values
                         }
                     ]
@@ -542,16 +573,17 @@
             return chartInstance
         }
 
+        function createLineChart(){
 
 
-        new Chart(chartDOM4, {
+            new Chart(chartDOM4, {
             type: 'bar',
             data: {
                 labels: ["Guvernanta Corporativa", "Departamente Suport", "Resurse Umane", "Financiar-Contabilitate"],
                 datasets: [{
-                        label: "Completitudine",
-                        type: "bar",
-                        borderColor: "#36a2eb",
+                    label: "Completitudine",
+                    type: "bar",
+                    borderColor: "#36a2eb",
                         backgroundColor:'blue',
                         data: [408,547,675,734],
                         fill: false
@@ -564,15 +596,19 @@
                         fill: false
                     }
                 ]
-                },
-                options: {
+            },
+            options: {
                 title: {
                     display: true,
                     text: 'Population growth (millions): Europe & Africa'
                 },
                 legend: { display: true }
-                }
-            });
+            }
+        });
+
+        }
+
+        createLineChart()
     }
 
     init()

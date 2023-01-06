@@ -16,10 +16,7 @@ class HomeController
 	public function index()
 	{
 
-
-
         $departaments =  Departamente::pluck('nume', 'id');
-
 
 		return view('home', compact('departaments') );
 	}
@@ -98,8 +95,8 @@ class HomeController
 		$departaments = DB::table('departamentes')
 			->select([
 				'departamentes.*',
-                'sr.id as sr_id',
 				'departamentes.id as dep_id',
+                'sr.id as sr_id',
                 'dim.*',
                 'sr.*'
 			])
@@ -121,6 +118,8 @@ class HomeController
 			->whereNull('departamentes.deleted_at')
 			->leftJoin('dimensiunes as dim', 'dim.id', '=', 'departamentes.id')
 			->get();
+
+            // return response()->json($departaments);
 
             $data = [];
 
@@ -145,5 +144,82 @@ class HomeController
 
 		return response()->json($data);
 	}
+
+    public function getDimensionsResults()
+    {
+
+        $dimensions = DB::table('dimensiunes')
+        ->select([
+            'dimensiunes.*',
+            'dimensiunes.id as dim_id',
+            'sr.*',
+            'sr.id as sr_id',
+            'u.name as user_name',
+            'sb.*'
+
+        ])
+        // ->where('departamente_id','=', 1)
+        ->leftJoin('survey_builders as sb', function ($join)  {
+            $join->on('sb.dimensiune_id', '=', 'dimensiunes.id');
+            // $join->where('sb.dimensiune_id', '=', 1);
+
+        })
+        ->leftJoin('survey_results as sr', function ($join)  {
+            $join->on('sr.survey_builder_id', '=', 'sb.id');
+
+
+
+            // Get results by user
+            // $join->where('sr.user_id', '=', Auth::user()->id);
+        })
+        ->leftJoin('users as u', 'u.id', '=', 'sr.user_id')
+
+        // ->leftJoin('survey_builders as sb', function ($join)  {
+        //     $join->on('sb.departamente_id', '=', 'departamentes.id');
+
+        //     // Get results by depatament
+        //     // if($depId){
+        //     // 	$join->where('sb.departamente_id','=', $depId);
+        //     // }
+        // })
+        // ->leftJoin('survey_results as sr', function ($join)  {
+        //     $join->on('sr.survey_builder_id', '=', 'sb.id');
+
+
+        //     // Get results by user
+        //     // $join->where('sr.user_id', '=', Auth::user()->id);
+        // })
+        // ->whereNull('departamentes.deleted_at')
+        // ->leftJoin('dimensiunes as dim', 'dim.id', '=', 'departamentes.id')
+        ->where('departamente_id','=',1)
+        ->orderBy('sr_id')
+        ->get();
+
+        // return response()->json($dimensions);
+
+        $data = [];
+
+        foreach ($dimensions as $dimension) {
+
+            if (!isset($data[$dimension->dim_id])) {
+                $data[$dimension->dim_id] = [
+                    'id'             => $dimension->dim_id,
+                    'name'            => $dimension->dimensiune,
+                    'survey_results' => []
+                ];
+            }
+
+            if ($dimension->sr_id) {
+                $data[$dimension->dim_id]['survey_results'][] = [
+                    'id' => $dimension->sr_id,
+                    'schema' => $dimension->schema_results,
+                    'user_name'  => $dimension->user_name
+                ];
+            }
+        }
+
+
+        return response()->json($data);
+    }
 
 }

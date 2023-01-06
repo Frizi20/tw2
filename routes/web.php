@@ -1,5 +1,7 @@
 <?php
 
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
+
 Route::redirect('/', '/login');
 Route::get('/home', function () {
     if (session('status')) {
@@ -15,8 +17,11 @@ Auth::routes();
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'middleware' => ['auth']], function () {
     //Dashbord
     Route::get('/', 'HomeController@index')->name('home');
-    
+
+
+    // Get data for Dashboard
     Route::get('/departaments-results','HomeController@getDepartamentsResults')->name('getDepartamentsResults');
+    Route::get('/dimensions-results','HomeController@getDimensionsResults')->name('getDimensionsResults');
     // Route::get('/departaments-categor');
     Route::get('/categories-results','HomeController@getCategoriesResults')->name('getCategoriesResults');
 
