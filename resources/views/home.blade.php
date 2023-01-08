@@ -291,7 +291,6 @@
         ])
         .then(([chartData1,chartData2,depResultsData, dimResultsData])=>{
 
-            const processedLineGraphData = processData(dimResultsData)
             const processedChartData1 = processData(chartData1)
             const processedChartData2 = processData(chartData2)
             const departamentsProcessedData = processDepartamentsData(depResultsData)
@@ -299,8 +298,10 @@
 			const revertChart1 = revertProcessedData(processedChartData1)
 			const revertChart2 = revertProcessedData(processedChartData2)
 			const revertChart3 = revertProcessedData(departamentsProcessedData)
+            
+            const processedLineGraphData = processData(dimResultsData)
 
-
+            console.log(processedLineGraphData)
 
             window.chart1 = createChart(chartDOM1,processedChartData1.titles,processedChartData1.values)
             createChart(chartDOM2,processedChartData2.titles,processedChartData2.values)
@@ -309,8 +310,8 @@
 			createChart(chartRiskDOM1,revertChart1.titles,revertChart1.values, true)
 			createChart(chartRiskDOM2,revertChart2.titles,revertChart2.values, true)
 			createChart(chartRiskDOM3,revertChart3.titles,revertChart3.values, true)
-
             createLineChart(processedLineGraphData)
+
 
 
 
