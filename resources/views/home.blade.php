@@ -50,6 +50,43 @@
     .bar-chart-details {
         align-self: flex-start;
     }
+
+
+
+    table{
+        border-collapse: collapse
+    }
+
+    table thead th{
+        padding-left: 10px;
+    }
+
+    table, th, td {
+        border: 1px solid #e8e8e8;
+        padding: 2px;
+    }
+
+    table tbody td{
+        padding-left: 15px;
+    }
+
+    table tbody td:nth-child(2),
+    table tbody td:nth-child(4){
+        padding-left: 25px;
+    }
+
+    .line-chart-container .card-header{
+        /* background: red; */
+        display: flex;
+    }
+    .line-chart-container .card-header h5{
+        margin-left: 15px;
+    }
+
+    .line-chart-container .card-header .form-group{
+        flex: 0 0 150px;
+    }
+
 </style>
 @endsection
 
@@ -73,7 +110,8 @@
                                     <select
                                         class="form-control select2 {{ $errors->has('departament') ? 'is-invalid' : '' }}"
                                         name="departament_id" id="departament_id">
-                                        <option value="" disabled selected>Select Departament</option>
+                                        <option value="" disabled >Select Departament</option>
+                                        <option value="">All departaments</option>
                                         @foreach($departaments as $id => $entry)
                                         <option value="{{ $id }}" {{ old('departament_id')==$id ? 'selected' : '' }}>
                                             {{$entry }}</option>
@@ -121,7 +159,7 @@
                     <div class="col-md-4 pt-5 d-flex">
                         <div class="card flex-grow-1">
                             <div class="card-header">
-                                <h5> Completitudine dimensiuni </h5>
+                                <h5> Completitudine Departamente </h5>
                             </div>
                             <div class="card-body">
                                 <div style="">
@@ -155,7 +193,7 @@
                     <div class="col-md-4 pt-3 d-flex">
                         <div class="card flex-grow-1">
                             <div class="card-header">
-                                <h5> Completitudine dimensiuni </h5>
+                                <h5> Riscuri categorii de control </h5>
                             </div>
                             <div class="card-body">
                                 <div style="">
@@ -172,7 +210,7 @@
                     <div class="col-md-4 pt-3 d-flex">
                         <div class="card flex-grow-1">
                             <div class="card-header">
-                                <h5> Completitudine dimensiuni </h5>
+                                <h5> Riscuri departamente </h5>
                             </div>
                             <div class="card-body">
                                 <div style="">
@@ -187,9 +225,27 @@
                     </div>
 
                     <div class="col-md-8 d-flex">
-                        <div class="card flex-grow-1">
+                        <div class="card flex-grow-1 line-chart-container">
                             <div class="card-header">
-                                <h5> Resurse Umane dimensiuni - completitudine & risc </h5>
+                                <div class="form-group">
+                                    <select
+                                        class="form-control select2 {{ $errors->has('departament') ? 'is-invalid' : '' }}"
+                                        name="line_chart_dep_id" id="line_chart_dep_id">
+                                        <option value="" disabled >Select Departament</option>
+                                        @foreach($departaments as $id => $entry)
+                                        <option value="{{ $id }}" {{ old('departament_id')==$id  ? 'selected' : '' }}>
+                                            {{$entry }}</option>
+                                        @endforeach
+                                    </select>
+                                    @if($errors->has('departament'))
+                                    <div class="invalid-feedback">
+                                        {{ $errors->first('departament') }}
+                                    </div>
+                                    @endif
+                                    <span class="help-block">{{ trans('cruds.surveyResult.fields.departament_helper')
+                                        }}</span>
+                                </div>
+                                <h5> - completitudine & risc </h5>
                             </div>
                             <div class="card-body">
                                 <div style="">
@@ -209,15 +265,15 @@
                                 <h5> Completitudine dimensiuni </h5>
                             </div> --}}
                             <div class="card-body">
-                                <table style="width: 100%;">
+                                <table class="departament-dimensions" style="width: 100%;">
                                     <thead>
-                                        <th>Departament</th>
+                                        <th>Dimensiune</th>
                                         <th>Completitudine</th>
                                         <th>Risc</th>
                                         <th>Excelenta</th>
                                     </thead>
                                     <tbody>
-                                        <tr>
+                                        {{-- <tr>
                                             <td>Guvernanta Corporativa</td>
                                             <td>3</td>
                                             <td>2</td>
@@ -240,7 +296,7 @@
                                             <td>3</td>
                                             <td>2</td>
                                             <td>5</td>
-                                        </tr>
+                                        </tr> --}}
                                     </tbody>
                                 </table>
                                 <div class="chart-alert">
@@ -250,8 +306,6 @@
 
                         </div>
                     </div>
-
-
 
                 </div>
 
@@ -277,31 +331,34 @@
         const chartRiskDOM2 = document.getElementById("radar-chart-risk-2")
         const chartRiskDOM3 = document.getElementById("radar-chart-risk-3")
 
+        const departamentDimTable = document.querySelector('.departament-dimensions tbody')
+
         const chartDOM4 = document.getElementById("radar-chart-4");
         const departamentSelect = $('#departament_id')
-        let chart1
+        const lineChartDepartamentSelect = $('#line_chart_dep_id')
 
+        let chart1
+        let lineChart
 
 
         Promise.all([
-            getGraphData(1),
+            getGraphData(departamentSelect.val()),
             getGraphData(),
             getDepartamentsResultsData(),
-            getDimensionsResultsData()
+            getDimensionsResultsData(lineChartDepartamentSelect.val())
         ])
         .then(([chartData1,chartData2,depResultsData, dimResultsData])=>{
 
             const processedChartData1 = processData(chartData1)
             const processedChartData2 = processData(chartData2)
+
             const departamentsProcessedData = processDepartamentsData(depResultsData)
             //create graphs
 			const revertChart1 = revertProcessedData(processedChartData1)
 			const revertChart2 = revertProcessedData(processedChartData2)
 			const revertChart3 = revertProcessedData(departamentsProcessedData)
-            
-            const processedLineGraphData = processData(dimResultsData)
 
-            console.log(processedLineGraphData)
+            const processedLineGraphData = processData(dimResultsData)
 
             window.chart1 = createChart(chartDOM1,processedChartData1.titles,processedChartData1.values)
             createChart(chartDOM2,processedChartData2.titles,processedChartData2.values)
@@ -310,29 +367,52 @@
 			createChart(chartRiskDOM1,revertChart1.titles,revertChart1.values, true)
 			createChart(chartRiskDOM2,revertChart2.titles,revertChart2.values, true)
 			createChart(chartRiskDOM3,revertChart3.titles,revertChart3.values, true)
-            createLineChart(processedLineGraphData)
 
-
-
+            lineChart = createLineChart(chartDOM4,processedLineGraphData,revertProcessedData(processedLineGraphData))
+            updateDimTable(departamentDimTable,processedLineGraphData,revertProcessedData(processedLineGraphData))
 
         })
         .catch(error=>{
             console.log(error)
         })
 
+
+        //Change departament graph
         departamentSelect.on('change', async function(){
             const depID = $(this).val()
 
             const data = await getGraphData(depID)
             const processedData = processData(data)
 
-            console.log(processedData)
-
             window.chart1.data.datasets[0].data = processedData.values
 
             window.chart1.update()
 
         })
+
+        //Update line chart
+        lineChartDepartamentSelect.on('change', async function () {
+            const depId = $(this).val()
+
+            const dimResultsData = await getDimensionsResultsData(depId)
+            const processedData = processData(dimResultsData)
+            const revertedData = revertProcessedData(processedData)
+
+            lineChart.data.labels = processedData.titles
+            lineChart.data.datasets[0].data = processedData.values
+            lineChart.data.datasets[1].data = revertedData.values
+
+            updateDimTable(departamentDimTable,processedData,revertedData)
+
+            lineChart.update()
+        })
+
+        function updateChart(chart,newValues){
+
+            chart.data.datasets[0].data = newValues
+            chart.update()
+
+        }
 
         async function getGraphData(deepartament){
 
@@ -359,11 +439,11 @@
 
         }
 
-        async function getDimensionsResultsData() {
+        async function getDimensionsResultsData(depId) {
 
             try {
 
-                const response = await fetch('/admin/dimensions-results')
+                const response = await fetch(`/admin/dimensions-results/?depId=${depId}`)
 
                 const resData = response.json()
 
@@ -399,7 +479,6 @@
                 const [key,value] = el
                 return value
             })
-
 
             let departamentsAnswers = []
 
@@ -444,10 +523,6 @@
 
         function processData(data){
 
-            // console.log(
-            //     data
-            // )
-
             const controlCategories = Object.entries(data).map((el)=>{
                 const [key,value] = el
                 return value
@@ -456,6 +531,8 @@
             // console.log(controlCategories)
 
             let categoriesSurveyAnswers = []
+
+            // console.log(controlCategories)
 
             controlCategories.forEach(category => {
                 // let mergedSchemas = []
@@ -474,9 +551,11 @@
 
             });
 
-
+            console.log(categoriesSurveyAnswers)
 
             const avgs = categoriesSurveyAnswers.map(catSurveyAnswer =>{
+
+                console.log(catSurveyAnswer)
 
                 const avgSore =  catSurveyAnswer.categoryMergedSchemas.reduce((acc,curr,_,arr)=>{
                     return acc + Number(curr.value) / arr.length
@@ -487,6 +566,8 @@
                     avg:avgSore
                 }
             })
+
+            console.log(avgs)
 
 
 			return avgs.reduce((acc,curr) =>{
@@ -574,42 +655,60 @@
             return chartInstance
         }
 
-        function createLineChart(){
-
-
-            new Chart(chartDOM4, {
-            type: 'bar',
-            data: {
-                labels: ["Guvernanta Corporativa", "Departamente Suport", "Resurse Umane", "Financiar-Contabilitate"],
-                datasets: [{
-                    label: "Completitudine",
-                    type: "bar",
-                    borderColor: "#36a2eb",
-                        backgroundColor:'blue',
-                        data: [408,547,675,734],
-                        fill: false
-                    }, {
-                        label: "Risc",
+        function createLineChart(chartDOMLocation,completedData,riskData){
+            return new Chart(chartDOM4, {
+                type: 'bar',
+                data: {
+                    labels: completedData.titles,
+                    datasets: [{
+                        label: "Completitudine",
                         type: "bar",
-                        backgroundColor:'#ff6565',
-                        borderColor: "#ff6384",
-                        data: [133,221,783,2478],
-                        fill: false
-                    }
-                ]
-            },
-            options: {
-                title: {
-                    display: true,
-                    text: 'Population growth (millions): Europe & Africa'
+                        borderColor: "#36a2eb",
+                            backgroundColor:'blue',
+                            data: completedData.values,
+                            fill: false
+                        }, {
+                            label: "Risc",
+                            type: "bar",
+                            backgroundColor:'#ff6565',
+                            borderColor: "#ff6384",
+                            data: riskData.values,
+                            fill: false
+                        }
+                    ]
                 },
-                legend: { display: true }
-            }
-        });
+                options: {
+                    title: {
+                        // display: true,
+                        // text: 'Population growth (millions): Europe & Africa'
+                    },
+                    legend: { display: true },
+                    scales: {
+                        y: {
+                            display: true,
+                            max:5,
+                            min:0
+                        }
+                    }
 
+                }
+            });
         }
 
-        createLineChart()
+        function updateDimTable(table,completedData,riskData){
+            console.log(completedData)
+            const html = completedData.titles.map((dim,i,currArr)=>{
+                return `<tr>
+                            <td> ${dim} </td>
+                            <td> ${completedData.values[i] % 1 === 0 ? completedData.values[i] : completedData.values[i].toFixed(2)} </td>
+                            <td> ${riskData.values[i] % 1 === 0 ? riskData.values[i] : riskData.values[i].toFixed(2)} </td>
+                            <td> 5 </td>
+                        </tr>`
+            }).join('')
+
+            document.querySelector('table tbody').innerHTML = html
+        }
+
     }
 
     init()
