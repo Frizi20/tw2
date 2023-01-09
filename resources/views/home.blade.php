@@ -359,6 +359,7 @@
 			const revertChart3 = revertProcessedData(departamentsProcessedData)
 
             const processedLineGraphData = processData(dimResultsData)
+            console.log(processedLineGraphData)
 
             window.chart1 = createChart(chartDOM1,processedChartData1.titles,processedChartData1.values)
             createChart(chartDOM2,processedChartData2.titles,processedChartData2.values)
@@ -530,51 +531,80 @@
 
             // console.log(controlCategories)
 
-            let categoriesSurveyAnswers = []
-
+            const categoriesSurveyAvgs = {
+                titles:[],
+                values:[]
+            }
+            console.log(controlCategories)
+            
             // console.log(controlCategories)
 
-            controlCategories.forEach(category => {
-                // let mergedSchemas = []
+            controlCategories.forEach(category=>{
 
-                const categoryMergedSchemas =  category.survey_results.reduce((acc,curr)=>{
-                    return [...acc, ...JSON.parse(curr.schema).fields]
-                },[]).filter(field => field?.notApplicable !== true)
-
-                // console.log(categoryMergedSchemas)
-
-
-                categoriesSurveyAnswers.push({
-                    categoryName: category.name,
-                    categoryMergedSchemas
-                })
-
-            });
-
-            console.log(categoriesSurveyAnswers)
-
-            const avgs = categoriesSurveyAnswers.map(catSurveyAnswer =>{
-
-                console.log(catSurveyAnswer)
-
-                const avgSore =  catSurveyAnswer.categoryMergedSchemas.reduce((acc,curr,_,arr)=>{
-                    return acc + Number(curr.value) / arr.length
+                const surveyAvgs = category.survey_results.map(survey=>{
+                    // console.log(category.name)
+                    return JSON.parse(survey.schema).fields.filter(question=>question.notApplicable !== true).reduce((acc,curr,_,arr)=>{
+                        return acc + Number(curr.value) / arr.length
+                    },0)
+                }).reduce((acc,curr,_,arr)=>{
+                    return acc + Number(curr) / arr.length
                 },0)
 
-                return {
-                    categoryName:catSurveyAnswer.categoryName,
-                    avg:avgSore
-                }
+                
+                
+                categoriesSurveyAvgs.titles.push(category.name)
+                categoriesSurveyAvgs.values.push(surveyAvgs)
+
             })
 
-            console.log(avgs)
+            return categoriesSurveyAvgs
 
 
-			return avgs.reduce((acc,curr) =>{
-                const currTitle = {titles:[...acc.titles,curr.categoryName]}
-                const currVal =    {values:[...acc.values,curr.avg]}
-                return {...currTitle, ...currVal}
-            }, {titles:[],values:[]})
+           
+
+            // let categoriesSurveyAnswers = []
+
+
+            // controlCategories.forEach(category => {
+            //     // let mergedSchemas = []
+
+            //     const categoryMergedSchemas =  category.survey_results.reduce((acc,curr)=>{
+            //         return [...acc, ...JSON.parse(curr.schema).fields]
+            //     },[]).filter(field => field?.notApplicable !== true)
+
+            //     // console.log(categoryMergedSchemas)
+
+               
+
+            //     categoriesSurveyAnswers.push({
+            //         categoryName: category.name,
+            //         categoryMergedSchemas
+            //     })
+
+            // });
+
+
+
+            // const avgs = categoriesSurveyAnswers.map(catSurveyAnswer =>{
+
+
+            //     const avgSore =  catSurveyAnswer.categoryMergedSchemas.reduce((acc,curr,_,arr)=>{
+            //         return acc + Number(curr.value) / arr.length
+            //     },0)
+
+            //     return {
+            //         categoryName:catSurveyAnswer.categoryName,
+            //         avg:avgSore
+            //     }
+            // })
+
+
+
+			// return avgs.reduce((acc,curr) =>{
+            //     const currTitle = {titles:[...acc.titles,curr.categoryName]}
+            //     const currVal =    {values:[...acc.values,curr.avg]}
+            //     return {...currTitle, ...currVal}
+            // }, {titles:[],values:[]})
 
 
         }
