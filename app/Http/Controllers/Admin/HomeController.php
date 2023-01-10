@@ -26,15 +26,22 @@ class HomeController
 
         $getAll = isset($request->all) && $request->all === 'true';
         $depId = $request->depId ?? '';
+        $dimId = $request->dimId ?? '';
 
         $categories = DB::table('categorie_de_controls')
             ->whereNull('categorie_de_controls.deleted_at')
-            ->leftJoin('survey_builders as sb', function ($join) use ($depId, $getAll) {
+            ->leftJoin('survey_builders as sb', function ($join) use ($depId, $dimId, $getAll) {
                 $join->on('sb.categorie_de_control_id', '=', 'categorie_de_controls.id');
 
                 // Get results by depatament
-                if ($depId) {
-                    $join->where('sb.departamente_id', '=', $depId);
+                if($depId !== 'all'){
+                    if ($depId) {
+                        $join->where('sb.departamente_id', '=', $depId);
+                    }
+
+                    if($dimId){
+                        $join->where('sb.dimensiune_id','=',$dimId);
+                    }
                 }
             })
 
@@ -156,7 +163,13 @@ class HomeController
         $depId = $request->depId;
 
         $dimensions = DB::table('departamentes_dimensiunes')
-        ->where('dep.id', '=', $depId)
+        // ->where('dep.id', '=', $depId)
+        ->where(function($query) use($depId){
+            if ($depId) {
+                $query->where('dep.id','=', $depId);
+            }// $join->on('sr.survey_builder_id', '=', 'sb.id');
+
+        })
         ->leftJoin('departamentes as dep', 'departamentes_dimensiunes.departament_id', '=', 'dep.id')
         ->leftJoin('dimensiunes as dim', 'departamentes_dimensiunes.dimensiune_id', '=', 'dim.id')
         ->select(

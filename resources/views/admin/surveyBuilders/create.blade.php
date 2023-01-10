@@ -332,7 +332,7 @@
     //update schema method
     async function updateFormSchema(schema){
 
-        
+
         const bodyData = {
             dep_id:departament_id,
             dim_id:dimension_id,
@@ -348,7 +348,7 @@
             return
         }
 
-       
+
 
         const response = await fetch('/admin/survey-builders/store-survey', {
                 method: 'POST',

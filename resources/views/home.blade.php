@@ -4,14 +4,37 @@
 @section('styles')
 @parent
 <style>
-    .dimension-surveys {
+    .control-category-surveys,
+    .dimensions-surveys {
 
         display: flex;
         justify-content: space-between;
     }
 
-    .dimension-surveys>div {
+    .control-category-surveys {
+        /* display: block; */
+    }
+
+    .control-category-surveys>div,
+    .dimensions-surveys>div {
         width: 170px
+    }
+
+    .control-category-surveys .select-inputs {
+        display: flex;
+        margin-right:5px;
+    }
+
+    .control-category-surveys .select-inputs .form-group {
+        width: 100%;
+        position: relative;
+    }
+
+    .close-dimension-selection {
+        position: absolute;
+        right: -18px;
+        top: 2px;
+        cursor: pointer;
     }
 
     .card-body {
@@ -51,42 +74,57 @@
         align-self: flex-start;
     }
 
+    .chart-wrapper.hidden {
+        display: none;
+    }
 
-
-    table{
+    table {
         border-collapse: collapse
     }
 
-    table thead th{
+    table thead th {
         padding-left: 10px;
     }
 
-    table, th, td {
+    table,
+    th,
+    td {
         border: 1px solid #e8e8e8;
         padding: 2px;
     }
 
-    table tbody td{
+    table tbody td {
         padding-left: 15px;
     }
 
     table tbody td:nth-child(2),
-    table tbody td:nth-child(4){
+    table tbody td:nth-child(4) {
         padding-left: 25px;
     }
 
-    .line-chart-container .card-header{
+    .line-chart-container .card-header {
         /* background: red; */
         display: flex;
-    }
-    .line-chart-container .card-header h5{
-        margin-left: 15px;
+        /* min-height: 65px; */
     }
 
-    .line-chart-container .card-header .form-group{
+    .card-header{
+        min-height: 65px;
+    }
+
+    .line-chart-container .card-header h5 {
+        margin-left: 15px;
+        line-height: 24px;
+    }
+
+    .line-chart-container .card-header .form-group {
         flex: 0 0 150px;
     }
 
+    .card-header h5 {
+        font-size: 14px;
+        line-height: 24px;
+    }
 </style>
 @endsection
 
@@ -100,61 +138,6 @@
 
 
                 <div class="container col-md-12 d-flex flex-sm-row flex-column flex-wrap">
-                    <div class="col-md-4 pt-5 d-flex">
-                        <div class="card flex-grow-1">
-                            <div class="card-header dimension-surveys" style="height: 55px;">
-                                <h5>Completitudine dimensiuni</h5>
-
-                                <div class="form-group">
-
-                                    <select
-                                        class="form-control select2 {{ $errors->has('departament') ? 'is-invalid' : '' }}"
-                                        name="departament_id" id="departament_id">
-                                        <option value="" disabled >Select Departament</option>
-                                        <option value="">All departaments</option>
-                                        @foreach($departaments as $id => $entry)
-                                        <option value="{{ $id }}" {{ old('departament_id')==$id ? 'selected' : '' }}>
-                                            {{$entry }}</option>
-                                        @endforeach
-                                    </select>
-                                    @if($errors->has('departament'))
-                                    <div class="invalid-feedback">
-                                        {{ $errors->first('departament') }}
-                                    </div>
-                                    @endif
-                                    <span class="help-block">{{ trans('cruds.surveyResult.fields.departament_helper')
-                                        }}</span>
-                                </div>
-
-                            </div>
-                            <div class="card-body">
-                                <div style="">
-                                    <canvas id="radar-chart" width="800" height="400"></canvas>
-                                </div>
-                                <div class="chart-alert">
-                                    Date insuficiente pentru afisarea graficului
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <div class="col-md-4 pt-5 d-flex">
-                        <div class="card flex-grow-1">
-                            <div class="card-header" style="height: 55px;">
-                                <h5> Completitudine categorii de control </h5>
-                            </div>
-                            <div class="card-body">
-                                <div style="">
-                                    <canvas id="radar-chart-2" width="800" height="400"></canvas>
-                                </div>
-                                <div class="chart-alert">
-                                    Date insuficiente pentru afisarea graficului
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
 
                     <div class="col-md-4 pt-5 d-flex">
                         <div class="card flex-grow-1">
@@ -173,14 +156,64 @@
                         </div>
                     </div>
 
-                    <div class="col-md-4 pt-3 d-flex">
+                    <div class="col-md-4 pt-5 d-flex">
                         <div class="card flex-grow-1">
-                            <div class="card-header">
-                                <h5> Completitudine dimensiuni </h5>
+                            <div class="card-header control-category-surveys" style="height:55px;">
+                                <h5>Completitudine categorii de control</i></h5>
+
+                                <div class="select-inputs">
+                                    <div class="form-group departament-select">
+                                        <select
+                                            class="form-control select2 {{ $errors->has('departament') ? 'is-invalid' : '' }}"
+                                            name="departament_id" id="departament_id">
+                                            <option value="" disabled>Select Departament</option>
+                                            <option value="all">All departaments</option>
+                                            @foreach($departaments as $id => $entry)
+                                            <option value="{{ $id }}" {{ old('departament_id')==$id ? 'selected' : ''
+                                                }}>
+                                                {{$entry }}</option>
+                                            @endforeach
+                                        </select>
+                                        @if($errors->has('departament'))
+                                        <div class="invalid-feedback">
+                                            {{ $errors->first('departament') }}
+                                        </div>
+                                        @endif
+                                        <span class="help-block">{{
+                                            trans('cruds.surveyResult.fields.departament_helper')
+                                            }}</span>
+                                    </div>
+
+                                    <div class="form-group dimension-select">
+
+                                        <div class="close-dimension-selection">
+                                            <i class="fa fa-times" aria-hidden="true"></i>
+                                        </div>
+
+                                        <select
+                                            class="form-control select2 {{ $errors->has('categorie_de_control') ? 'is-invalid' : '' }}"
+                                            name="control_category_dim_id" id="control_category_dim_id" required>
+                                            {{-- @foreach($categorie_de_controls as $id => $entry)
+                                            <option value="{{ $id }}" {{ old('categorie_de_control_id')==$id
+                                                ? 'selected' : '' }}>{{ $entry }}
+                                            </option>
+                                            @endforeach --}}
+                                        </select>
+                                        @if($errors->has('categorie_de_control'))
+                                        <div class="invalid-feedback">
+                                            {{ $errors->first('categorie_de_control') }}
+                                        </div>
+                                        @endif
+                                        <span class="help-block">{{
+                                            trans('cruds.surveyBuilder.fields.categorie_de_control_helper') }}</span>
+                                    </div>
+                                </div>
+
+
                             </div>
                             <div class="card-body">
                                 <div style="">
-                                    <canvas id="radar-chart-risk-1" width="" height="400"></canvas>
+                                    <canvas id="radar-chart" width="800" height="400"></canvas>
                                 </div>
                                 <div class="chart-alert">
                                     Date insuficiente pentru afisarea graficului
@@ -190,14 +223,33 @@
                         </div>
                     </div>
 
-                    <div class="col-md-4 pt-3 d-flex">
+                    <div class="col-md-4 pt-5 d-flex">
                         <div class="card flex-grow-1">
-                            <div class="card-header">
-                                <h5> Riscuri categorii de control </h5>
+                            <div class="card-header dimensions-surveys" style="height:55px;">
+                                <h5> Completitudine dimensiuni </h5>
+                                <div class="form-group">
+                                    <select
+                                        class="form-control select2 {{ $errors->has('departament') ? 'is-invalid' : '' }}"
+                                        name="dimension_dep_id" id="dimension_dep_id">
+                                        <option value="" disabled>Select Departament</option>
+                                        <option value="">All departaments</option>
+                                        @foreach($departaments as $id => $entry)
+                                        <option value="{{ $id }}" {{ old('departament_id')==$id ? 'selected' : '' }}>
+                                            {{$entry }}</option>
+                                        @endforeach
+                                    </select>
+                                    @if($errors->has('departament'))
+                                    <div class="invalid-feedback">
+                                        {{ $errors->first('departament') }}
+                                    </div>
+                                    @endif
+                                    <span class="help-block">{{ trans('cruds.surveyResult.fields.departament_helper')
+                                        }}</span>
+                                </div>
                             </div>
                             <div class="card-body">
-                                <div style="">
-                                    <canvas id="radar-chart-risk-2" width="" height="400"></canvas>
+                                <div class="chart-wrapper">
+                                    <canvas id="radar-chart-2" width="800" height="400"></canvas>
                                 </div>
                                 <div class="chart-alert">
                                     Date insuficiente pentru afisarea graficului
@@ -224,6 +276,41 @@
                         </div>
                     </div>
 
+                    <div class="col-md-4 pt-3 d-flex">
+                        <div class="card flex-grow-1">
+                            <div class="card-header">
+                                <h5> Riscuri categorii de control </h5>
+                            </div>
+                            <div class="card-body">
+                                <div style="">
+                                    <canvas id="radar-chart-risk-1" width="" height="400"></canvas>
+                                </div>
+                                <div class="chart-alert">
+                                    Date insuficiente pentru afisarea graficului
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 pt-3 d-flex">
+                        <div class="card flex-grow-1">
+                            <div class="card-header">
+                                <h5> Riscuri dimensiuni </h5>
+                            </div>
+                            <div class="card-body">
+                                <div style="">
+                                    <canvas id="radar-chart-risk-2" width="" height="400"></canvas>
+                                </div>
+                                <div class="chart-alert">
+                                    Date insuficiente pentru afisarea graficului
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+
                     <div class="col-md-8 d-flex">
                         <div class="card flex-grow-1 line-chart-container">
                             <div class="card-header">
@@ -231,9 +318,10 @@
                                     <select
                                         class="form-control select2 {{ $errors->has('departament') ? 'is-invalid' : '' }}"
                                         name="line_chart_dep_id" id="line_chart_dep_id">
-                                        <option value="" disabled >Select Departament</option>
+                                        <option value="" disabled>Select Departament</option>
+                                        <option value="">All departaments</option>
                                         @foreach($departaments as $id => $entry)
-                                        <option value="{{ $id }}" {{ old('departament_id')==$id  ? 'selected' : '' }}>
+                                        <option value="{{ $id }}" {{ old('departament_id')==$id ? 'selected' : '' }}>
                                             {{$entry }}</option>
                                         @endforeach
                                     </select>
@@ -331,19 +419,31 @@
         const chartRiskDOM2 = document.getElementById("radar-chart-risk-2")
         const chartRiskDOM3 = document.getElementById("radar-chart-risk-3")
 
+        const chartDOM4 = document.getElementById("radar-chart-4");
+
         const departamentDimTable = document.querySelector('.departament-dimensions tbody')
 
-        const chartDOM4 = document.getElementById("radar-chart-4");
+        const dimensionSelectContainer   = $('.dimension-select')
+        const departamentSelectContainer = $('.departament-select')
+
         const departamentSelect = $('#departament_id')
         const lineChartDepartamentSelect = $('#line_chart_dep_id')
+        const dimensionDepartamentSelect = $('#dimension_dep_id')
+        const controlCategoryDimensionSelect= $('#control_category_dim_id')
+        const closeDimensionSelect = $('.close-dimension-selection')
+
+        let selectedDepId
 
         let chart1
         let lineChart
+        let dimensionsChart
+
+        dimensionSelectContainer.css('display','none')
 
 
         Promise.all([
             getGraphData(departamentSelect.val()),
-            getGraphData(),
+            getDimensionsResultsData(),
             getDepartamentsResultsData(),
             getDimensionsResultsData(lineChartDepartamentSelect.val())
         ])
@@ -351,18 +451,18 @@
 
             const processedChartData1 = processData(chartData1)
             const processedChartData2 = processData(chartData2)
-
             const departamentsProcessedData = processDepartamentsData(depResultsData)
             //create graphs
 			const revertChart1 = revertProcessedData(processedChartData1)
 			const revertChart2 = revertProcessedData(processedChartData2)
 			const revertChart3 = revertProcessedData(departamentsProcessedData)
 
+
+
             const processedLineGraphData = processData(dimResultsData)
-            console.log(processedLineGraphData)
 
             window.chart1 = createChart(chartDOM1,processedChartData1.titles,processedChartData1.values)
-            createChart(chartDOM2,processedChartData2.titles,processedChartData2.values)
+            dimensionsChart = createChart(chartDOM2,processedChartData2.titles,processedChartData2.values)
             createChart(chartDOM3,departamentsProcessedData.titles,departamentsProcessedData.values)
 
 			createChart(chartRiskDOM1,revertChart1.titles,revertChart1.values, true)
@@ -372,6 +472,7 @@
             lineChart = createLineChart(chartDOM4,processedLineGraphData,revertProcessedData(processedLineGraphData))
             updateDimTable(departamentDimTable,processedLineGraphData,revertProcessedData(processedLineGraphData))
 
+
         })
         .catch(error=>{
             console.log(error)
@@ -380,14 +481,45 @@
 
         //Change departament graph
         departamentSelect.on('change', async function(){
-            const depID = $(this).val()
+            const depId = $(this).val()
 
-            const data = await getGraphData(depID)
+            selectedDepId = depId
+
+            //Clear dimension options
+            controlCategoryDimensionSelect.empty()
+
+            if(!depId) return;
+
+            if(depId === 'all'){
+                const data = await getGraphData()
+                const processedData = processData(data)
+
+                window.chart1.data.datasets[0].data = processedData.values
+                window.chart1.update()
+
+                return
+            }
+
+            getDimensionsForDepartament(depId,controlCategoryDimensionSelect,dimensionSelectContainer,departamentSelectContainer)
+
+
+
+        })
+
+        controlCategoryDimensionSelect.on('change',async function(){
+            const dimId = $(this).val()
+
+            if(!dimId) return
+
+            const data = await getGraphData(selectedDepId, dimId)
             const processedData = processData(data)
 
+            window.chart1.data.labels = processedData.titles
             window.chart1.data.datasets[0].data = processedData.values
 
             window.chart1.update()
+
+
 
         })
 
@@ -408,6 +540,40 @@
             lineChart.update()
         })
 
+
+        dimensionDepartamentSelect.on('change', async function () {
+            const depId = $(this).val()
+
+            const dimResultsData = await getDimensionsResultsData(depId)
+            const processedData = processData(dimResultsData)
+
+            dimensionsChart.data.labels = processedData.titles
+            dimensionsChart.data.datasets[0].data = processedData.values
+
+            dimensionsChart.update()
+
+            console.log(
+                chartDOM2.parentElement.parentElement
+            )
+            console.log(processedData.titles)
+
+            if(processedData.titles.length <=2){
+                chartDOM2.parentElement.parentElement.querySelector('.chart-alert').classList.add('active')
+                chartDOM2.parentElement.parentElement.querySelector('.chart-wrapper').classList.add('hidden')
+            }else{
+                chartDOM2.parentElement.parentElement.querySelector('.chart-alert').classList.remove('active')
+                chartDOM2.parentElement.parentElement.querySelector('.chart-wrapper').classList.remove('hidden')
+            }
+
+        })
+
+        closeDimensionSelect.on('click', function(){
+            dimensionSelectContainer.css('display','none')
+            departamentSelectContainer.css('display','block')
+
+            departamentSelect.val(departamentSelect.find("option:eq(0)").val()).trigger('change');
+        })
+
         function updateChart(chart,newValues){
 
             chart.data.datasets[0].data = newValues
@@ -415,9 +581,13 @@
 
         }
 
-        async function getGraphData(deepartament){
+        async function getGraphData(departament = '', dimension){
 
-            let params = deepartament ? `?depId=${deepartament}` :  '?all=true'
+            let params = departament ? `?depId=${departament}` :  '?all=true'
+
+            if(!!departament && departament !== 'all' && dimension){
+                params = `?depId=${departament}&dimId=${dimension}`
+            }
 
             try {
 
@@ -426,7 +596,6 @@
                 if(!response.ok) throw new Error('category survey results could not be fetched')
 
                 const data = await response.json()
-
 
                 return Promise.resolve(data)
                 // const categoryGraph = processData(data)
@@ -440,7 +609,7 @@
 
         }
 
-        async function getDimensionsResultsData(depId) {
+        async function getDimensionsResultsData(depId='') {
 
             try {
 
@@ -473,6 +642,50 @@
 
         }
 
+        async function getDimensionsForDepartament(depId,selectEl, selectedContainer,currentSelectContainer){
+
+            try {
+
+                const response = await fetch('/admin/survey-builders/get-dimensions', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN':document.querySelector('meta[name="csrf-token"]').content
+                        },
+                    body: JSON.stringify({
+                        depId:depId
+                    })
+                });
+
+                if(!response.ok) throw new Error('Dimensions could not be fetched')
+
+                const dimensions = await response.json();
+
+                selectedContainer.css('display','block')
+                currentSelectContainer.css('display','none')
+
+                const pleaseSelectOption = new Option('Select dimension','',false,false)
+                pleaseSelectOption.disabled = true
+                pleaseSelectOption.selected = true
+                selectEl.append(pleaseSelectOption)
+
+                console.log(dimensions)
+
+                Object.entries(dimensions).forEach(dimension =>{
+                    const [id, name] = dimension
+                    const newOption = new Option(name, id, false, false);
+
+                    selectEl.append(newOption)
+                })
+
+
+            } catch (error) {
+                console.log(error)
+            }
+
+        }
+
         function processDepartamentsData(data){
             // console.log(data)
 
@@ -481,38 +694,65 @@
                 return value
             })
 
-            let departamentsAnswers = []
+			departamentsSurveyAnswers = {
+				titles:[],
+				values:[]
+			}
 
-            departaments.forEach(departament =>{
+			departaments.forEach(departament=>{
 
-                const departamentsMergedSchemas = departament.survey_results.reduce((acc,curr)=>{
-                    return [...acc, ...JSON.parse(curr.schema).fields]
-                },[]).filter(field => field?.notApplicable !== true)
-
-
-                departamentsAnswers.push({
-                    departamentName:departament.name,
-                    departamentsMergedSchemas
-                })
-
-            })
-
-
-              return departamentsAnswers.map(depSurveyAnswer =>{
-                const avgScore =  depSurveyAnswer.departamentsMergedSchemas.reduce((acc,curr,_,arr)=>{
-                    return acc + Number(curr.value) / arr.length
+				const surveyAvgs = departament.survey_results.map(survey=>{
+                    return JSON.parse(survey.schema).fields.filter(question=>question.notApplicable !== true).reduce((acc,curr,_,arr)=>{
+                        return acc + Number(curr.value) / arr.length
+                    },0)
+                }).reduce((acc,curr,_,arr)=>{
+                    return acc + Number(curr) / arr.length
                 },0)
 
-                return {
-                    departamentName:depSurveyAnswer.departamentName,
-                    avg:avgScore
-                }
-            }).reduce((acc,curr) =>{
-                const currTitle = {titles:[...acc.titles,curr.departamentName]}
-                const currVal =    {values:[...acc.values,curr.avg]}
-                return {...currTitle, ...currVal}
-            }, {titles:[],values:[]})
+				departamentsSurveyAnswers.titles.push(departament.name)
+                departamentsSurveyAnswers.values.push(surveyAvgs)
+
+			})
+
+
+			return departamentsSurveyAnswers
+
+            // let departamentsAnswers = []
+
+            // departaments.forEach(departament =>{
+
+            //     const departamentsMergedSchemas = departament.survey_results.reduce((acc,curr)=>{
+            //         return [...acc, ...JSON.parse(curr.schema).fields]
+            //     },[]).filter(field => field?.notApplicable !== true)
+
+
+            //     departamentsAnswers.push({
+            //         departamentName:departament.name,
+            //         departamentsMergedSchemas
+            //     })
+
+            // })
+
+			// console.log(departamentsAnswers)
+
+
+            //   return departamentsAnswers.map(depSurveyAnswer =>{
+            //     const avgScore =  depSurveyAnswer.departamentsMergedSchemas.reduce((acc,curr,_,arr)=>{
+            //         return acc + Number(curr.value) / arr.length
+            //     },0)
+
+            //     return {
+            //         departamentName:depSurveyAnswer.departamentName,
+            //         avg:avgScore
+            //     }
+            // }).reduce((acc,curr) =>{
+            //     const currTitle = {titles:[...acc.titles,curr.departamentName]}
+            //     const currVal =    {values:[...acc.values,curr.avg]}
+            //     return {...currTitle, ...currVal}
+            // }, {titles:[],values:[]})
         }
+
+
 
 		function revertProcessedData(data){
 			const clonedData = JSON.parse(JSON.stringify(data))
@@ -522,6 +762,8 @@
 			return clonedData
 		}
 
+
+
         function processData(data){
 
             const controlCategories = Object.entries(data).map((el)=>{
@@ -529,38 +771,52 @@
                 return value
             })
 
-            // console.log(controlCategories)
 
             const categoriesSurveyAvgs = {
                 titles:[],
                 values:[]
             }
-            console.log(controlCategories)
-            
-            // console.log(controlCategories)
 
             controlCategories.forEach(category=>{
 
                 const surveyAvgs = category.survey_results.map(survey=>{
                     // console.log(category.name)
                     return JSON.parse(survey.schema).fields.filter(question=>question.notApplicable !== true).reduce((acc,curr,_,arr)=>{
-                        return acc + Number(curr.value) / arr.length
+
+                        return curr ? acc + Number(curr.value) / arr.length
                     },0)
                 }).reduce((acc,curr,_,arr)=>{
-                    return acc + Number(curr) / arr.length
+                    return Number(curr) / arr.length + acc
                 },0)
 
-                
-                
+                // console.log(
+                    category.survey_results.map(survey=>{
+                        // console.log(survey)
+                        const x = JSON.parse(survey.schema).fields.filter(question=>question.notApplicable !== true).reduce((acc,curr,_,arr)=>{
+                            console.log({
+                                acc,
+                                currNr:Number(curr.value),
+                                length:arr.length
+                            })
+                            return acc + Number(curr.value) / arr.length
+                        },0)
+
+                        console.log(x)
+                        return x
+                    })
+                // )
+
                 categoriesSurveyAvgs.titles.push(category.name)
                 categoriesSurveyAvgs.values.push(surveyAvgs)
 
             })
 
+
+
             return categoriesSurveyAvgs
 
 
-           
+
 
             // let categoriesSurveyAnswers = []
 
@@ -574,7 +830,7 @@
 
             //     // console.log(categoryMergedSchemas)
 
-               
+
 
             //     categoriesSurveyAnswers.push({
             //         categoryName: category.name,
@@ -617,6 +873,7 @@
             chartDOMLocation.parentElement.parentElement.querySelector('.chart-alert').classList.add('active')
             return
           }
+
 
           const chartInstance = new Chart(chartDOMLocation, {
                 type: 'radar',
@@ -726,7 +983,9 @@
         }
 
         function updateDimTable(table,completedData,riskData){
-            console.log(completedData)
+
+
+
             const html = completedData.titles.map((dim,i,currArr)=>{
                 return `<tr>
                             <td> ${dim} </td>
