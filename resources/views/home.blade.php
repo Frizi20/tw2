@@ -782,28 +782,28 @@
                 const surveyAvgs = category.survey_results.map(survey=>{
                     // console.log(category.name)
                     return JSON.parse(survey.schema).fields.filter(question=>question.notApplicable !== true).reduce((acc,curr,_,arr)=>{
-
-                        return curr ? acc + Number(curr.value) / arr.length
+                        console.log(arr)
+                        return acc + Number(curr.value) / arr.length
                     },0)
                 }).reduce((acc,curr,_,arr)=>{
                     return Number(curr) / arr.length + acc
                 },0)
 
                 // console.log(
-                    category.survey_results.map(survey=>{
-                        // console.log(survey)
-                        const x = JSON.parse(survey.schema).fields.filter(question=>question.notApplicable !== true).reduce((acc,curr,_,arr)=>{
-                            console.log({
-                                acc,
-                                currNr:Number(curr.value),
-                                length:arr.length
-                            })
-                            return acc + Number(curr.value) / arr.length
-                        },0)
+                    // category.survey_results.map(survey=>{
+                    //     // console.log(survey)
+                    //     const x = JSON.parse(survey.schema).fields.filter(question=>question.notApplicable !== true).reduce((acc,curr,_,arr)=>{
+                    //         console.log({
+                    //             acc,
+                    //             currNr:Number(curr.value),
+                    //             length:arr.length
+                    //         })
+                    //         return acc + Number(curr.value) / arr.length
+                    //     },0)
 
-                        console.log(x)
-                        return x
-                    })
+                    //     console.log(x)
+                    //     return x
+                    // })
                 // )
 
                 categoriesSurveyAvgs.titles.push(category.name)
