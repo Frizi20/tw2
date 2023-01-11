@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+// use App\Models\User;
 
 class SurveyResultController extends Controller
 {
@@ -21,10 +22,16 @@ class SurveyResultController extends Controller
     {
         abort_if(Gate::denies('survey_result_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
+
+
+        $isAdmin = Auth::user()->getIsAdminAttribute();
+
         $user_id = Auth::user()->id;
 
         $surveyResults = DB::table('survey_results as sr')
         ->select([
+            'u.id as user_id',
+            'u.name as user_name',
             'sr.id as sr_id',
             'sb.id as sb_id',
             'dep.nume as dep_name',
@@ -32,9 +39,9 @@ class SurveyResultController extends Controller
             'sb.*',
             'dep.*',
             'dim.*',
-            'cc.nume as cc_name'
+            'cc.nume as cc_name',
+
         ])
-        ->where('sr.user_id','=', $user_id)
         ->leftJoin('survey_builders as sb', function($join){
             $join->on('sb.id','=','sr.survey_builder_id');
         })
@@ -42,7 +49,17 @@ class SurveyResultController extends Controller
         // ->leftJoin('departament')
         ->leftJoin('dimensiunes as dim','dim.id','=','sb.dimensiune_id')
         ->leftJoin('categorie_de_controls as cc','cc.id','=','sb.categorie_de_control_id')
+        ->leftJoin('users as u',function($join) use($user_id, $isAdmin){
+            $join->on('u.id','=','user_id');
+            if(!$isAdmin){
+                $join->where('sr.user_id','=', $user_id);
+            }
+
+        })
         ->get();
+
+
+        // return response()->json($surveyResults);
 
         // $surveyResults = SurveyResult::with(['departament', 'user','surveyBuilder'])
         // ->where('user_id',Auth::user()->id)
@@ -50,7 +67,7 @@ class SurveyResultController extends Controller
         // ->get();
 
 
-        // return response()->json($surveyResults); 
+        // return response()->json($surveyResults);
 
 
         return view('admin.surveyResults.index', compact('surveyResults'));

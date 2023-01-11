@@ -54,7 +54,7 @@ class DimensiuneController extends Controller
 
         return redirect()->route('admin.dimensiunes.index');
 
-      
+
 
 
         return response()->json($request->all());
@@ -94,10 +94,9 @@ class DimensiuneController extends Controller
     {
         abort_if(Gate::denies('dimensiune_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        
+        $dimensiune->departaments()->detach();
         $dimensiune->delete();
         
-        $dimensiune->departaments()->detach();
         return back();
     }
 

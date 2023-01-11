@@ -118,13 +118,13 @@
                         <div class="recommendation">
 
                             <div class="close-recommendation-modal">
-                                <i class="fa fa-times-circle" aria-hidden="true"></i>
+                                {{-- <i class="fa fa-times-circle" aria-hidden="true"></i> --}}
+                                <i class="fa fa-times" aria-hidden="true"></i>
                             </div>
 
                             <div class="recommendation-title">Adauga recomandare</div>
 
-                            <textarea name="" id=""  rows="5" spellcheck="false">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Doloribus excepturi voluptatem exercitationem? Est suscipit   maxime non sed tenetur, porro ipsum, officia nihil obcaecati delectus fugit consequuntur, nobis amet aut neque.
-                            </textarea>
+                            <textarea name="" id=""  rows="5" spellcheck="false"></textarea>
 
                             <div class="btn-container">
                                 <div class="btn">Save</div>

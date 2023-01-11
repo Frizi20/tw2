@@ -20,14 +20,17 @@
         width: 170px
     }
 
-    .control-category-surveys .select-inputs {
+    .card-footer .select-inputs {
         display: flex;
-        margin-right:5px;
+        margin-right: 5px;
+
     }
 
-    .control-category-surveys .select-inputs .form-group {
+    .card-footer .select-inputs .form-group {
         width: 100%;
         position: relative;
+        width: 150px;
+        margin-right: 15px;
     }
 
     .close-dimension-selection {
@@ -51,7 +54,7 @@
         toop: 0;
         /* top: 18px; */
         font-size: 17px;
-        font-weight: 4000;
+        font-weight: 400;
         color: #ff5e5e;
         text-align: center;
         padding-left: 10px;
@@ -64,18 +67,48 @@
         position: absolute;
         background: white;
         display: none;
+
+
+        text-align: center;
+        margin-top: 7px;
+        background: #ff656561;
+        padding: 8px;
+        /* display: none; */
+        color: #ff4646b3;
+        /* color: white; */
+        background: #ffe1e136;
+        outline: 1px solid #ffa4a440;
+        /* font-family: system-ui; */
+        font-weight: 500;
+        /* font-size: 13px; */
+        position: absolute;
+        top:-7px;
+        left: 0;
+        width: 100%;
+        height: 100%;
+
+        background-color: #fff9f9;
+
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        z-index: 1;
     }
 
     .chart-alert.active {
-        display: block;
+        display: flex;
     }
 
     .bar-chart-details {
         align-self: flex-start;
     }
 
+    .chart-wrapper{
+        position: relative;
+    }
+
     .chart-wrapper.hidden {
-        display: none;
+        /* opacity: 0; */
     }
 
     table {
@@ -105,26 +138,93 @@
     .line-chart-container .card-header {
         /* background: red; */
         display: flex;
+        align-items: center;
         /* min-height: 65px; */
     }
 
-    .card-header{
-        min-height: 65px;
+    .graphs-wrapper .card-header {
+        /* min-height: 65px;
+        border-bottom: none;
+        z-index: 1;
+
+        display: flex;
+        flex-direction: column; */
+
+        padding-top: 0;
+        padding-bottom: 0;
     }
 
     .line-chart-container .card-header h5 {
         margin-left: 15px;
         line-height: 24px;
+        padding: 0;
+
     }
 
     .line-chart-container .card-header .form-group {
         flex: 0 0 150px;
+        margin-bottom: 0 !important;
+        min-width: 150px;
+
     }
 
-    .card-header h5 {
+    .graphs-wrapper .form-group{
+        /* margin: 0; */
+        margin-bottom: 0 !important;
+        min-width: 150px;
+    }
+
+    .graphs-wrapper .card-header h5 {
         font-size: 14px;
         line-height: 24px;
+        display: block;
+        flex: none;
+        font-size: 1.25rem;
+        font-weight: 500;
+        hyphens: auto;
+        letter-spacing: .0125em;
+        min-width: 0;
+        overflow-wrap: normal;
+        overflow: hidden;
+        padding: 0.5rem 1rem;
+        text-overflow: ellipsis;
+        text-transform: none;
+        white-space: nowrap;
+        word-break: normal;
+        word-wrap: break-word;
+        padding-left: 0;
+        padding-top: 17px;
     }
+
+    .chart-container{
+        position: relative;
+    }
+
+    .card-footer {
+        padding: 0;
+        min-height: 35px;
+        width: 100%;
+        /* background-color: grey; */
+        position: relative;
+        display:flex;
+        align-items: center;
+        padding-top: 20px;
+        border: none;
+
+    }
+
+    @media (max-width: 1600px) {
+        .graphs-wrapper .card-header h5{
+            font-size: 1rem;
+        }
+    }
+
+    @media (max-width: 1354px){
+        .graphs-wrapper .card-header h5{
+            font-size: 0.8rem;
+        }
+    }
+
 </style>
 @endsection
 
@@ -137,7 +237,7 @@
                 </div>
 
 
-                <div class="container col-md-12 d-flex flex-sm-row flex-column flex-wrap">
+                <div class="container col-md-12 d-flex flex-sm-row flex-column flex-wrap graphs-wrapper">
 
                     <div class="col-md-4 pt-5 d-flex">
                         <div class="card flex-grow-1">
@@ -145,12 +245,17 @@
                                 <h5> Completitudine Departamente </h5>
                             </div>
                             <div class="card-body">
-                                <div style="">
+                                <div class="chart-container">
                                     <canvas id="radar-chart-3" width="" height="400"></canvas>
+                                    <div class="chart-alert">
+                                        Date insuficeiente pentru afisarea graficului
+                                    </div>
+
                                 </div>
-                                <div class="chart-alert">
-                                    Date insuficiente pentru afisarea graficului
+                                <div class="card-footer">
+
                                 </div>
+
                             </div>
 
                         </div>
@@ -158,16 +263,91 @@
 
                     <div class="col-md-4 pt-5 d-flex">
                         <div class="card flex-grow-1">
-                            <div class="card-header control-category-surveys" style="height:55px;">
+                            <div class="card-header control-category-surveys" style="">
                                 <h5>Completitudine categorii de control</i></h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="radar-chart" width="800" height="400"></canvas>
+                                    <div class="chart-alert">
+                                        Date insuficeiente pentru afisarea graficului
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="select-inputs">
+                                        <div class="form-group departament-select">
+                                            <select
+                                                class="form-control select2 {{ $errors->has('departament') ? 'is-invalid' : '' }}"
+                                                name="departament_id" id="departament_id">
+                                                <option value="" disabled>Select Departament</option>
+                                                <option value="all">All departaments</option>
+                                                @foreach($departaments as $id => $entry)
+                                                <option value="{{ $id }}" {{ old('departament_id')==$id ? 'selected'
+                                                    : '' }}>
+                                                    {{$entry }}</option>
+                                                @endforeach
+                                            </select>
+                                            @if($errors->has('departament'))
+                                            <div class="invalid-feedback">
+                                                {{ $errors->first('departament') }}
+                                            </div>
+                                            @endif
+                                            <span class="help-block">{{
+                                                trans('cruds.surveyResult.fields.departament_helper')
+                                                }}</span>
+                                        </div>
 
-                                <div class="select-inputs">
-                                    <div class="form-group departament-select">
+                                        <div class="form-group dimension-select">
+
+                                            <div class="close-dimension-selection">
+                                                <i class="fa fa-times" aria-hidden="true"></i>
+                                            </div>
+
+                                            <select
+                                                class="form-control select2 {{ $errors->has('categorie_de_control') ? 'is-invalid' : '' }}"
+                                                name="control_category_dim_id" id="control_category_dim_id" required>
+                                                {{-- @foreach($categorie_de_controls as $id => $entry)
+                                                <option value="{{ $id }}" {{ old('categorie_de_control_id')==$id
+                                                    ? 'selected' : '' }}>{{ $entry }}
+                                                </option>
+                                                @endforeach --}}
+                                            </select>
+                                            @if($errors->has('categorie_de_control'))
+                                            <div class="invalid-feedback">
+                                                {{ $errors->first('categorie_de_control') }}
+                                            </div>
+                                            @endif
+                                            <span class="help-block">{{
+                                                trans('cruds.surveyBuilder.fields.categorie_de_control_helper')
+                                                }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 pt-5 d-flex">
+                        <div class="card flex-grow-1">
+                            <div class="card-header dimensions-surveys" style="">
+                                <h5> Completitudine dimensiuni </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-wrapper">
+                                    <canvas id="radar-chart-2" width="800" height="400"></canvas>
+                                    <div class="chart-alert">
+                                        Date insuficeiente pentru afisarea graficului
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="form-group">
                                         <select
                                             class="form-control select2 {{ $errors->has('departament') ? 'is-invalid' : '' }}"
-                                            name="departament_id" id="departament_id">
+                                            name="dimension_dep_id" id="dimension_dep_id">
                                             <option value="" disabled>Select Departament</option>
-                                            <option value="all">All departaments</option>
+                                            <option value="">All departaments</option>
                                             @foreach($departaments as $id => $entry)
                                             <option value="{{ $id }}" {{ old('departament_id')==$id ? 'selected' : ''
                                                 }}>
@@ -183,77 +363,8 @@
                                             trans('cruds.surveyResult.fields.departament_helper')
                                             }}</span>
                                     </div>
-
-                                    <div class="form-group dimension-select">
-
-                                        <div class="close-dimension-selection">
-                                            <i class="fa fa-times" aria-hidden="true"></i>
-                                        </div>
-
-                                        <select
-                                            class="form-control select2 {{ $errors->has('categorie_de_control') ? 'is-invalid' : '' }}"
-                                            name="control_category_dim_id" id="control_category_dim_id" required>
-                                            {{-- @foreach($categorie_de_controls as $id => $entry)
-                                            <option value="{{ $id }}" {{ old('categorie_de_control_id')==$id
-                                                ? 'selected' : '' }}>{{ $entry }}
-                                            </option>
-                                            @endforeach --}}
-                                        </select>
-                                        @if($errors->has('categorie_de_control'))
-                                        <div class="invalid-feedback">
-                                            {{ $errors->first('categorie_de_control') }}
-                                        </div>
-                                        @endif
-                                        <span class="help-block">{{
-                                            trans('cruds.surveyBuilder.fields.categorie_de_control_helper') }}</span>
-                                    </div>
                                 </div>
 
-
-                            </div>
-                            <div class="card-body">
-                                <div style="">
-                                    <canvas id="radar-chart" width="800" height="400"></canvas>
-                                </div>
-                                <div class="chart-alert">
-                                    Date insuficiente pentru afisarea graficului
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <div class="col-md-4 pt-5 d-flex">
-                        <div class="card flex-grow-1">
-                            <div class="card-header dimensions-surveys" style="height:55px;">
-                                <h5> Completitudine dimensiuni </h5>
-                                <div class="form-group">
-                                    <select
-                                        class="form-control select2 {{ $errors->has('departament') ? 'is-invalid' : '' }}"
-                                        name="dimension_dep_id" id="dimension_dep_id">
-                                        <option value="" disabled>Select Departament</option>
-                                        <option value="">All departaments</option>
-                                        @foreach($departaments as $id => $entry)
-                                        <option value="{{ $id }}" {{ old('departament_id')==$id ? 'selected' : '' }}>
-                                            {{$entry }}</option>
-                                        @endforeach
-                                    </select>
-                                    @if($errors->has('departament'))
-                                    <div class="invalid-feedback">
-                                        {{ $errors->first('departament') }}
-                                    </div>
-                                    @endif
-                                    <span class="help-block">{{ trans('cruds.surveyResult.fields.departament_helper')
-                                        }}</span>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <div class="chart-wrapper">
-                                    <canvas id="radar-chart-2" width="800" height="400"></canvas>
-                                </div>
-                                <div class="chart-alert">
-                                    Date insuficiente pentru afisarea graficului
-                                </div>
                             </div>
 
                         </div>
@@ -265,12 +376,16 @@
                                 <h5> Riscuri departamente </h5>
                             </div>
                             <div class="card-body">
-                                <div style="">
+                                <div class="chart-container">
                                     <canvas id="radar-chart-risk-3" width="" height=""></canvas>
+                                    <div class="chart-alert">
+                                        Date insuficeiente pentru afisarea graficului
+                                    </div>
                                 </div>
-                                <div class="chart-alert">
-                                    Date insuficiente pentru afisarea graficului
+                                <div class="card-footer">
+
                                 </div>
+
                             </div>
 
                         </div>
@@ -282,12 +397,16 @@
                                 <h5> Riscuri categorii de control </h5>
                             </div>
                             <div class="card-body">
-                                <div style="">
+                                <div class="chart-container">
                                     <canvas id="radar-chart-risk-1" width="" height="400"></canvas>
+                                    <div class="chart-alert">
+                                        Date insuficeiente pentru afisarea graficului
+                                    </div>
                                 </div>
-                                <div class="chart-alert">
-                                    Date insuficiente pentru afisarea graficului
+                                <div class="card-footer">
+
                                 </div>
+
                             </div>
 
                         </div>
@@ -299,12 +418,16 @@
                                 <h5> Riscuri dimensiuni </h5>
                             </div>
                             <div class="card-body">
-                                <div style="">
+                                <div class="chart-container">
                                     <canvas id="radar-chart-risk-2" width="" height="400"></canvas>
+                                    <div class="chart-alert">
+                                        Date insuficeiente pentru afisarea graficului
+                                    </div>
                                 </div>
-                                <div class="chart-alert">
-                                    Date insuficiente pentru afisarea graficului
+                                <div class="card-footer">
+
                                 </div>
+
                             </div>
 
                         </div>
@@ -336,12 +459,13 @@
                                 <h5> - completitudine & risc </h5>
                             </div>
                             <div class="card-body">
-                                <div style="">
+                                <div class="chart-container">
                                     <canvas id="radar-chart-4" width="" height=""></canvas>
+                                    <div class="chart-alert">
+                                        Date insuficeiente pentru afisarea graficului
+                                    </div>
                                 </div>
-                                <div class="chart-alert">
-                                    Date insuficiente pentru afisarea graficului
-                                </div>
+
                             </div>
 
                         </div>
@@ -387,9 +511,7 @@
                                         </tr> --}}
                                     </tbody>
                                 </table>
-                                <div class="chart-alert">
-                                    Date insuficiente pentru afisarea graficului
-                                </div>
+
                             </div>
 
                         </div>
@@ -491,11 +613,15 @@
             if(!depId) return;
 
             if(depId === 'all'){
+
+
                 const data = await getGraphData()
                 const processedData = processData(data)
 
                 window.chart1.data.datasets[0].data = processedData.values
                 window.chart1.update()
+
+                dimensionSelectContainer.css('display','none')
 
                 return
             }
@@ -558,6 +684,9 @@
             console.log(processedData.titles)
 
             if(processedData.titles.length <=2){
+                console.log(
+                    chartDOM2.parentElement
+                )
                 chartDOM2.parentElement.parentElement.querySelector('.chart-alert').classList.add('active')
                 chartDOM2.parentElement.parentElement.querySelector('.chart-wrapper').classList.add('hidden')
             }else{
@@ -663,7 +792,7 @@
                 const dimensions = await response.json();
 
                 selectedContainer.css('display','block')
-                currentSelectContainer.css('display','none')
+                // currentSelectContainer.css('display','none')
 
                 const pleaseSelectOption = new Option('Select dimension','',false,false)
                 pleaseSelectOption.disabled = true
@@ -702,9 +831,11 @@
 			departaments.forEach(departament=>{
 
 				const surveyAvgs = departament.survey_results.map(survey=>{
-                    return JSON.parse(survey.schema).fields.filter(question=>question.notApplicable !== true).reduce((acc,curr,_,arr)=>{
-                        return acc + Number(curr.value) / arr.length
-                    },0)
+                    const applicableSurveys = JSON.parse(survey.schema).fields.filter(question=>question.notApplicable !== true)
+
+				return applicableSurveys.reduce((acc,curr,_,arr)=>{
+                        return acc + Number(curr.value)
+                    },0) / applicableSurveys.length
                 }).reduce((acc,curr,_,arr)=>{
                     return acc + Number(curr) / arr.length
                 },0)
@@ -781,10 +912,12 @@
 
                 const surveyAvgs = category.survey_results.map(survey=>{
                     // console.log(category.name)
-                    return JSON.parse(survey.schema).fields.filter(question=>question.notApplicable !== true).reduce((acc,curr,_,arr)=>{
-                        console.log(arr)
-                        return acc + Number(curr.value) / arr.length
-                    },0)
+                    const applicableSurveys = JSON.parse(survey.schema).fields.filter(question=>question.notApplicable !== true)
+
+
+					return applicableSurveys.reduce((acc,curr,_,arr)=>{
+                        return acc + Number(curr.value)
+                    },0) / applicableSurveys.length
                 }).reduce((acc,curr,_,arr)=>{
                     return Number(curr) / arr.length + acc
                 },0)
@@ -810,7 +943,6 @@
                 categoriesSurveyAvgs.values.push(surveyAvgs)
 
             })
-
 
 
             return categoriesSurveyAvgs

@@ -128,7 +128,10 @@ class HomeController
                 // $join->where('sr.user_id', '=', Auth::user()->id);
             })
             ->whereNull('departamentes.deleted_at')
-            ->leftJoin('dimensiunes as dim', 'dim.id', '=', 'departamentes.id')
+            ->leftJoin('dimensiunes as dim', function($join){
+                $join->on('dim.id', '=', 'departamentes.id');
+                $join->whereNull('dim.deleted_at');
+            })
             ->get();
 
         // return response()->json($departaments);
@@ -172,6 +175,7 @@ class HomeController
         })
         ->leftJoin('departamentes as dep', 'departamentes_dimensiunes.departament_id', '=', 'dep.id')
         ->leftJoin('dimensiunes as dim', 'departamentes_dimensiunes.dimensiune_id', '=', 'dim.id')
+        ->whereNull('dim.deleted_at')
         ->select(
             'dim.id as dim_id',
             'sr.id as sr_id',

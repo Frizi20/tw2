@@ -26,3 +26,10 @@ media Cat it - Cat HR
 (1 + 2.5) / 2 = 1.75
 	sau
 1 + 1 + 1 + 3 + 3 + 3 = 2
+
+
+
+La stergerea unui departament/dimensiune/categorie de control se sterge Chestionarul care apartine de acestea? (da) (nu)
+
+da -> Atunci se sterg si Raspunsurile pentru respectivul chestionar?
+
