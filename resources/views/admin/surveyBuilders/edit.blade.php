@@ -47,7 +47,7 @@
                     </div>
                 </div>
             </div>
-            {{json_encode($surveyBuilder->schema)}}
+            {{-- {{json_encode($surveyBuilder->schema)}} --}}
 
             {{-- <div class="form-group">
                 <label for="schema">{{ trans('cruds.surveyBuilder.fields.schema') }}</label>
@@ -74,15 +74,16 @@
 @parent
 
 <script>
-         const schema = '';
+        const schema = {!! ($surveyBuilder->schema) !!};
         const departamentSelect = $('#departamente_id')
         const formBuilderWrapper = $('.form-builder-wrapper')
+        const surveyId = {!! $surveyBuilder->id !!}
 
         let builtForm
 
 
 
-
+        console.log(schema)
 
         // departamentSelect.on('change',function(){
         //     const newDepId = $(this).val()
@@ -99,24 +100,24 @@
         // })
 
 
-        const getFormSchema = async function(survId) {
+        // const getFormSchema = async function(survId) {
 
-            try {
-                const res = await fetch(`/admin/survey-builders/get-form-schema/${survId}`)
-                if(!res?.ok) throw new Error('Schema could not be fetched!')
-                const data = await res.json()
-                return data
+        //     try {
+        //         const res = await fetch(`/admin/survey-builders/get-form-schema/${survId}`)
+        //         if(!res?.ok) throw new Error('Schema could not be fetched!')
+        //         const data = await res.json()
+        //         return data
 
-            } catch (error) {
-                console.error(error)
-            }
+        //     } catch (error) {
+        //         console.error(error)
+        //     }
 
 
-		}
+		// }
 
 		const buildForm = async function(survId){
-			const data = await getFormSchema(survId)
-			const fb = new SurveyBuilder(JSON.parse(data.schema).fields)
+			// const data = await getFormSchema(survId)
+			const fb = new SurveyBuilder(schema.fields)
 
             //set curr form builder instance globally
             builtForm = fb
@@ -130,9 +131,6 @@
 		//update schema method
 		async function updateFormSchema(schema){
 
-
-            // console.log(survId)
-            // return
 			const response = await fetch(`/admin/survey-builders/update-survey`, {
 					method: 'post',
 					headers: {
@@ -141,8 +139,8 @@
 						'X-CSRF-TOKEN':document.querySelector('meta[name="csrf-token"]').content
 						},
 					body: JSON.stringify({
-						survId:survId,
-						schemaData:schema
+						survId:surveyId,
+                        schema
 					})
 				});
 

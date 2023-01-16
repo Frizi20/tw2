@@ -80,7 +80,7 @@
                                             {{count(json_decode($surveyBuilder->schema)->fields)}}
                                         </span>
 
-                                        
+
 
                             </td>
                             <td>

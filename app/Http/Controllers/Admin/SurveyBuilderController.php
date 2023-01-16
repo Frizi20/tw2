@@ -77,30 +77,30 @@ class SurveyBuilderController extends Controller
         $urlPath = $request->path();
         $user_id = Auth::user()->id;
         $session_id = Session::getId();
-        $surveyPath = '' .$request->dim_id . $request->dep_id . $request->cat_id;
+        $surveyPath = '' . $request->dim_id . $request->dep_id . $request->cat_id;
 
-        Session::put('survey_result',$surveyPath);
+        Session::put('survey_result', $surveyPath);
 
-        $sameAuthUsersSessions = SessionModel::where('user_id','=',$user_id)->where('id','!=',$session_id)->get();
+        $sameAuthUsersSessions = SessionModel::where('user_id', '=', $user_id)->where('id', '!=', $session_id)->get();
 
-        foreach ($sameAuthUsersSessions as $key=>$session ) {
+        foreach ($sameAuthUsersSessions as $key => $session) {
             # code...
             $payload = unserialize(base64_decode($session->payload));
             // return response()->json($payload);
-            if(isset($payload['survey_result'])){
+            if (isset($payload['survey_result'])) {
                 $otherUserSurveyPath = $payload['survey_result'];
-                if($otherUserSurveyPath && $otherUserSurveyPath == $surveyPath){
+                if ($otherUserSurveyPath && $otherUserSurveyPath == $surveyPath) {
                     $overlaping = true;
                 }
             }
 
 
-        //    return response()->json();
+            //    return response()->json();
         }
 
-        if($overlaping){
+        if ($overlaping) {
             return response()->json([
-                'status'=>'pending',
+                'status' => 'pending',
                 'message' => 'Work in progress!'
             ]);
         }
@@ -162,7 +162,7 @@ class SurveyBuilderController extends Controller
         $departament = Departamente::find($departamenteId);
         $dimensiune = $departament->dimensions->find($dimensionId);
 
-        $categoriesWithSurveys = $dimensiune->categoriiDeControl()->wherePivot('departamente_id',$departamenteId)->pluck('nume','categorie_de_controls.id');
+        $categoriesWithSurveys = $dimensiune->categoriiDeControl()->wherePivot('departamente_id', $departamenteId)->pluck('nume', 'categorie_de_controls.id');
 
 
 
@@ -181,7 +181,7 @@ class SurveyBuilderController extends Controller
 
         //  Departamente::find(1)->dimensions()->find(2)->categoriiDeControl()->wherePivot('departamente_id',1)->get()
 
-        $categoriesWithSurveys = $dimensiune->categoriiDeControl()->wherePivot('departamente_id',$departamenteId)->pluck('categorie_de_controls.id')->all();
+        $categoriesWithSurveys = $dimensiune->categoriiDeControl()->wherePivot('departamente_id', $departamenteId)->pluck('categorie_de_controls.id')->all();
         // return response()->json($categoriesWithSurveys);
         $categoriesWithoutSurveys = CategorieDeControl::whereNotIn('id', $categoriesWithSurveys)->get()->pluck('nume', 'id');
 
@@ -219,10 +219,8 @@ class SurveyBuilderController extends Controller
         // $departamentes = Departamente::has('surveys')->get()->pluck('nume', 'id')->prepend(trans('global.pleaseSelect'), '');
 
 
-        $departamentes = '';
 
-
-        return view('admin.surveyBuilders.edit', compact('departamentes', 'surveyBuilder'));
+        return view('admin.surveyBuilders.edit', compact('surveyBuilder'));
 
 
         //------------------
@@ -235,6 +233,32 @@ class SurveyBuilderController extends Controller
         $surveyBuilder->load('departamente', 'categorie_de_control');
 
         return view('admin.surveyBuilders.edit', compact('categorie_de_controls', 'departamentes', 'surveyBuilder'));
+    }
+
+    public function updateSurvey(Request $request)
+    {
+
+        $schema = $request->schema;
+        $surveyId = $request->survId;
+
+
+        if (!$schema || !$surveyId) return response()->json([
+            'error' => 'Survey ID or survey schema missing',
+            'status' => 'error'
+        ], 403);
+
+        $survey = SurveyBuilder::find($surveyId);
+
+        $updatedSurvey = $survey->update([
+            'schema' => $schema
+        ]);
+
+        if (!$updatedSurvey) return response()->json(['error' => 'survey could not be updated', 'status' => 'error'], 403);
+
+        return response()->json($updatedSurvey);
+        // return redirect()->route('admin.survey-builders.index');
+
+        return response()->json($request->all());
     }
 
     public function update(UpdateSurveyBuilderRequest $request, SurveyBuilder $surveyBuilder)

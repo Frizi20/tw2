@@ -51,9 +51,9 @@ class SurveyResultController extends Controller
         ->leftJoin('categorie_de_controls as cc','cc.id','=','sb.categorie_de_control_id')
         ->leftJoin('users as u',function($join) use($user_id, $isAdmin){
             $join->on('u.id','=','user_id');
-            if(!$isAdmin){
-                $join->where('sr.user_id','=', $user_id);
-            }
+            // if(!$isAdmin){
+                // $join->where('sr.user_id','=', $user_id);
+            // }
 
         })
         ->get();
@@ -134,6 +134,8 @@ class SurveyResultController extends Controller
 
         return view('admin.surveyResults.edit', compact('departaments', 'surveyResult', 'users'));
     }
+
+
 
     public function update(UpdateSurveyResultRequest $request, SurveyResult $surveyResult)
     {

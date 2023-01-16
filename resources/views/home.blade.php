@@ -33,11 +33,18 @@
         margin-right: 15px;
     }
 
-    .close-dimension-selection {
+    .close-dimension-selection,
+    .close-line-dimension-selection {
         position: absolute;
         right: -18px;
         top: 2px;
         cursor: pointer;
+    }
+
+
+    .line-dimension-select {
+        position: relative;
+        margin-left: 10px;
     }
 
     .card-body {
@@ -82,7 +89,7 @@
         font-weight: 500;
         /* font-size: 13px; */
         position: absolute;
-        top:-7px;
+        top: -7px;
         left: 0;
         width: 100%;
         height: 100%;
@@ -103,7 +110,7 @@
         align-self: flex-start;
     }
 
-    .chart-wrapper{
+    .chart-wrapper {
         position: relative;
     }
 
@@ -155,10 +162,9 @@
     }
 
     .line-chart-container .card-header h5 {
-        margin-left: 15px;
+        /* margin-left: 30px; */
         line-height: 24px;
         padding: 0;
-
     }
 
     .line-chart-container .card-header .form-group {
@@ -168,7 +174,7 @@
 
     }
 
-    .graphs-wrapper .form-group{
+    .graphs-wrapper .form-group {
         /* margin: 0; */
         margin-bottom: 0 !important;
         min-width: 150px;
@@ -196,7 +202,7 @@
         padding-top: 17px;
     }
 
-    .chart-container{
+    .chart-container {
         position: relative;
     }
 
@@ -206,7 +212,7 @@
         width: 100%;
         /* background-color: grey; */
         position: relative;
-        display:flex;
+        display: flex;
         align-items: center;
         padding-top: 20px;
         border: none;
@@ -214,17 +220,16 @@
     }
 
     @media (max-width: 1600px) {
-        .graphs-wrapper .card-header h5{
+        .graphs-wrapper .card-header h5 {
             font-size: 1rem;
         }
     }
 
-    @media (max-width: 1354px){
-        .graphs-wrapper .card-header h5{
+    @media (max-width: 1354px) {
+        .graphs-wrapper .card-header h5 {
             font-size: 0.8rem;
         }
     }
-
 </style>
 @endsection
 
@@ -437,6 +442,8 @@
                     <div class="col-md-8 d-flex">
                         <div class="card flex-grow-1 line-chart-container">
                             <div class="card-header">
+                                <h5> Completitudine & risc </h5>
+
                                 <div class="form-group">
                                     <select
                                         class="form-control select2 {{ $errors->has('departament') ? 'is-invalid' : '' }}"
@@ -456,7 +463,30 @@
                                     <span class="help-block">{{ trans('cruds.surveyResult.fields.departament_helper')
                                         }}</span>
                                 </div>
-                                <h5> - completitudine & risc </h5>
+                                <div class="form-group line-dimension-select">
+
+                                    <div class="close-line-dimension-selection">
+                                        <i class="fa fa-times" aria-hidden="true"></i>
+                                    </div>
+
+                                    <select
+                                        class="form-control select2 {{ $errors->has('categorie_de_control') ? 'is-invalid' : '' }}"
+                                        name="line_chart_dim_id" id="line_chart_dim_id" required>
+                                        {{-- @foreach($categorie_de_controls as $id => $entry)
+                                        <option value="{{ $id }}" {{ old('categorie_de_control_id')==$id ? 'selected'
+                                            : '' }}>{{ $entry }}
+                                        </option>
+                                        @endforeach --}}
+                                    </select>
+                                    @if($errors->has('categorie_de_control'))
+                                    <div class="invalid-feedback">
+                                        {{ $errors->first('categorie_de_control') }}
+                                    </div>
+                                    @endif
+                                    <span class="help-block">{{
+                                        trans('cruds.surveyBuilder.fields.categorie_de_control_helper')
+                                        }}</span>
+                                </div>
                             </div>
                             <div class="card-body">
                                 <div class="chart-container">
@@ -547,21 +577,27 @@
 
         const dimensionSelectContainer   = $('.dimension-select')
         const departamentSelectContainer = $('.departament-select')
+		const lineDimensionSelectContainer = $('.line-dimension-select')
 
         const departamentSelect = $('#departament_id')
         const lineChartDepartamentSelect = $('#line_chart_dep_id')
+		const lineChartDimensionSelect = $('#line_chart_dim_id')
         const dimensionDepartamentSelect = $('#dimension_dep_id')
         const controlCategoryDimensionSelect= $('#control_category_dim_id')
         const closeDimensionSelect = $('.close-dimension-selection')
+        const lineCloseDimensionSelect = $('.close-line-dimension-selection')
 
         let selectedDepId
+        let lineChartDepId
 
         let chart1
         let lineChart
         let dimensionsChart
+        let controlCategoryRiskChart
+        let dimensionsRiskChart
 
         dimensionSelectContainer.css('display','none')
-
+        lineDimensionSelectContainer.css('display','none')
 
         Promise.all([
             getGraphData(departamentSelect.val()),
@@ -587,8 +623,11 @@
             dimensionsChart = createChart(chartDOM2,processedChartData2.titles,processedChartData2.values)
             createChart(chartDOM3,departamentsProcessedData.titles,departamentsProcessedData.values)
 
-			createChart(chartRiskDOM1,revertChart1.titles,revertChart1.values, true)
-			createChart(chartRiskDOM2,revertChart2.titles,revertChart2.values, true)
+			controlCategoryRiskChart = createChart(chartRiskDOM1,revertChart1.titles,revertChart1.values, true)
+
+            window.x = controlCategoryRiskChart
+
+			dimensionsRiskChart = createChart(chartRiskDOM2,revertChart2.titles,revertChart2.values, true)
 			createChart(chartRiskDOM3,revertChart3.titles,revertChart3.values, true)
 
             lineChart = createLineChart(chartDOM4,processedLineGraphData,revertProcessedData(processedLineGraphData))
@@ -617,7 +656,14 @@
 
                 const data = await getGraphData()
                 const processedData = processData(data)
+                const revertedData = revertProcessedData(processedData)
 
+                controlCategoryRiskChart.data.labels = revertedData.titles
+                controlCategoryRiskChart.data.datasets[0].data = revertedData.values
+                controlCategoryRiskChart.update()
+
+
+                window.chart1.data.labels = processedData.titles
                 window.chart1.data.datasets[0].data = processedData.values
                 window.chart1.update()
 
@@ -626,7 +672,7 @@
                 return
             }
 
-            getDimensionsForDepartament(depId,controlCategoryDimensionSelect,dimensionSelectContainer,departamentSelectContainer)
+            getDimensionsForDepartament(depId,controlCategoryDimensionSelect,dimensionSelectContainer)
 
 
 
@@ -639,11 +685,18 @@
 
             const data = await getGraphData(selectedDepId, dimId)
             const processedData = processData(data)
+            const revertedData = revertProcessedData(processedData)
+
 
             window.chart1.data.labels = processedData.titles
             window.chart1.data.datasets[0].data = processedData.values
-
             window.chart1.update()
+
+            console.log(controlCategoryRiskChart)
+
+            controlCategoryRiskChart.data.labels = revertedData.titles
+            controlCategoryRiskChart.data.datasets[0].data = revertedData.values
+            controlCategoryRiskChart.update()
 
 
 
@@ -652,41 +705,64 @@
         //Update line chart
         lineChartDepartamentSelect.on('change', async function () {
             const depId = $(this).val()
-
             const dimResultsData = await getDimensionsResultsData(depId)
             const processedData = processData(dimResultsData)
             const revertedData = revertProcessedData(processedData)
+
+            lineChartDepId = depId
+
 
             lineChart.data.labels = processedData.titles
             lineChart.data.datasets[0].data = processedData.values
             lineChart.data.datasets[1].data = revertedData.values
 
             updateDimTable(departamentDimTable,processedData,revertedData)
-
             lineChart.update()
+			lineChartDimensionSelect.empty()
+
+            if(!depId) return
+			getDimensionsForDepartament(depId,lineChartDimensionSelect,lineDimensionSelectContainer,true)
+
         })
 
+		lineChartDimensionSelect.on('change', async function () {
+			const dimId = $(this).val()
+
+            const graphData = await getGraphData(lineChartDepId, dimId)
+            const processedData = processData(graphData)
+            const revertedData = revertProcessedData(processedData)
+
+
+            lineChart.data.labels = processedData.titles
+            lineChart.data.datasets[0].data = processedData.values
+            lineChart.data.datasets[1].data = revertedData.values
+
+            updateDimTable(departamentDimTable,processedData,revertedData)
+            lineChart.update()
+
+		})
 
         dimensionDepartamentSelect.on('change', async function () {
             const depId = $(this).val()
 
             const dimResultsData = await getDimensionsResultsData(depId)
             const processedData = processData(dimResultsData)
+            const revertedData = revertProcessedData(processedData)
+
+            console.log(dimensionsRiskChart.data)
+
+            dimensionsRiskChart.data.labels = revertedData.titles
+            dimensionsRiskChart.data.datasets[0].data = revertedData.values
+            dimensionsRiskChart.update()
 
             dimensionsChart.data.labels = processedData.titles
             dimensionsChart.data.datasets[0].data = processedData.values
-
             dimensionsChart.update()
 
-            console.log(
-                chartDOM2.parentElement.parentElement
-            )
-            console.log(processedData.titles)
+            dimensionsRiskChart
+
 
             if(processedData.titles.length <=2){
-                console.log(
-                    chartDOM2.parentElement
-                )
                 chartDOM2.parentElement.parentElement.querySelector('.chart-alert').classList.add('active')
                 chartDOM2.parentElement.parentElement.querySelector('.chart-wrapper').classList.add('hidden')
             }else{
@@ -701,6 +777,25 @@
             departamentSelectContainer.css('display','block')
 
             departamentSelect.val(departamentSelect.find("option:eq(0)").val()).trigger('change');
+        })
+
+        lineCloseDimensionSelect.on('click',async function () {
+            lineDimensionSelectContainer.css('display','none')
+
+            const dimResultsData = await getDimensionsResultsData(lineChartDepId)
+            const processedData = processData(dimResultsData)
+            const revertedData = revertProcessedData(processedData)
+
+
+
+            lineChart.data.labels = processedData.titles
+            lineChart.data.datasets[0].data = processedData.values
+            lineChart.data.datasets[1].data = revertedData.values
+
+            updateDimTable(departamentDimTable,processedData,revertedData)
+            lineChart.update()
+
+
         })
 
         function updateChart(chart,newValues){
@@ -771,7 +866,7 @@
 
         }
 
-        async function getDimensionsForDepartament(depId,selectEl, selectedContainer,currentSelectContainer){
+        async function getDimensionsForDepartament(depId,selectEl, selectedContainer, allDep = false ){
 
             try {
 
@@ -799,7 +894,10 @@
                 pleaseSelectOption.selected = true
                 selectEl.append(pleaseSelectOption)
 
-                console.log(dimensions)
+				if(allDep){
+					const getAllDimensionsOption = new Option('Toate dimensiunile','all',false,false)
+					selectEl.append(getAllDimensionsOption)
+				}
 
                 Object.entries(dimensions).forEach(dimension =>{
                     const [id, name] = dimension
