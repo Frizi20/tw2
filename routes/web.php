@@ -1,6 +1,9 @@
 <?php
 
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
+use Illuminate\Support\Facades\Session;
+
+
 
 Route::redirect('/', '/login');
 Route::get('/home', function () {
@@ -17,6 +20,16 @@ Auth::routes();
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'middleware' => ['auth']], function () {
     //Dashbord
     Route::get('/', 'HomeController@index')->name('home');
+
+
+    Route::get('/payload', function(){
+
+        $payload = 'YTo2OntzOjY6Il90b2tlbiI7czo0MDoiWEtNWGlrQnhFam8zcklLVEw2WFRRVkRKc2N3aXZ2M2dPWjJ1QVJZVSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NDk6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hZG1pbi9zdXJ2ZXktcmVzdWx0cy9jcmVhdGUiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToxO3M6NDoiYXV0aCI7YToxOntzOjIxOiJwYXNzd29yZF9jb25maXJtZWRfYXQiO2k6MTY3Mzk0MzA5NTt9czoxMzoic3VydmV5X3Jlc3VsdCI7czo0OiIxMDUxIjt9';
+
+        $decodedData = unserialize(base64_decode(($payload)));
+
+        return response()->json(Session::get('survey_result'));
+    });
 
 
     // Get data for Dashboard
@@ -66,6 +79,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     // Survey Result
 
     Route::post('survey-results/store-survey-result', 'SurveyResultController@storeSurveyResult')->name('survey-results.storeSurveyResult');
+
+    Route::post('survey-results/clear-survey-session','SurveyResultController@clearSurveySession')->name('survey-results.clearSurveySession');
 
     Route::delete('survey-results/destroy', 'SurveyResultController@massDestroy')->name('survey-results.massDestroy');
     Route::resource('survey-results', 'SurveyResultController');

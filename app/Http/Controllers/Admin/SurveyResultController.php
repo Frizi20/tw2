@@ -14,6 +14,8 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
+
 // use App\Models\User;
 
 class SurveyResultController extends Controller
@@ -73,6 +75,12 @@ class SurveyResultController extends Controller
         return view('admin.surveyResults.index', compact('surveyResults'));
     }
 
+    public function clearSurveySession()
+    {
+       //Forget survey path after resolved so the survey doesn't remain blocked
+       Session::forget('survey_result');
+    }
+
     public function create()
     {
         abort_if(Gate::denies('survey_result_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
@@ -88,13 +96,15 @@ class SurveyResultController extends Controller
     public function storeSurveyResult(Request $request)
     {
 
+
+
+        //Forget survey path after resolved so the survey doesn't remain blocked
+        Session::forget('survey_result');
+
         $user_id = Auth::user()->id;
 
-
         //check if the selected survey builder was created by current user
-
         $surveyIsResolvedByUser = SurveyResult::where([['user_id','=',Auth()->user()->id],['survey_builder_id','=',$request->surv_id]])->first();
-
 
         if($surveyIsResolvedByUser){
             return response()->json([

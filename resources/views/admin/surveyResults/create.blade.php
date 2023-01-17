@@ -124,7 +124,7 @@
 
                             <div class="recommendation-title">Adauga recomandare</div>
 
-                            <textarea name="" id=""  rows="5" spellcheck="false"></textarea>
+                            <textarea name="" id="" rows="5" spellcheck="false"></textarea>
 
                             <div class="btn-container">
                                 <div class="btn">Save</div>
@@ -171,31 +171,63 @@
     controlCategory.css('display','none')
     multiPartWrapper.css('display','none')
 
-
-   departamentSelect.on('change',function(){
-        const depId = $(this).val()
-
-        //hide multipart form
-        multiPartWrapper.css('display','none')
-
-
-        departament_id = depId
-
-        //empty dimension select options
-        dimensionSelect.empty()
-
-        //empty control categories select options
-        // controlCategorySerect.empty().trigger('change')
-
-        if(depId){
-           //show dimension
-           getDimensionsForDepartament(depId,dimensionSelect,dimensions)
-        //    dimensions.css('display','block')
-        }else{
-            dimensions.css('display','none')
-            controlCategory.css('display','none')
-        }
+    //if user page clear the survey path he was working at
+    document.addEventListener('beforeunload', async function(){
+        // if(document['hidden']){
+            const response =
+            alert('s')
+        // }
     })
+    window.onbeforeunload = async function(event) {
+        var s = "You have unsaved changes. Really leave?";
+
+        event = event || window.event;
+        if (event) {
+            // This is for IE
+            await resetSession()
+        }
+
+        // This is for all other browsers
+        return await resetSession()
+    }
+
+    async function resetSession(){
+        await fetch('/admin/survey-results/clear-survey-session',{
+                    method: 'POST',
+                    headers:{
+                        'Accept':'application/json',
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    }
+                })
+    }
+
+
+
+    departamentSelect.on('change',function(){
+            const depId = $(this).val()
+
+            //hide multipart form
+            multiPartWrapper.css('display','none')
+
+
+            departament_id = depId
+
+            //empty dimension select options
+            dimensionSelect.empty()
+
+            //empty control categories select options
+            // controlCategorySerect.empty().trigger('change')
+
+            if(depId){
+            //show dimension
+            getDimensionsForDepartament(depId,dimensionSelect,dimensions)
+            //    dimensions.css('display','block')
+            }else{
+                dimensions.css('display','none')
+                controlCategory.css('display','none')
+            }
+        })
 
     dimensionSelect.on('change',function(){
         const dimId = $(this).val();
@@ -407,6 +439,8 @@
 
 
     }
+
+
 
 
 

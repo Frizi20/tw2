@@ -587,6 +587,18 @@ class SurveyBuilder {
       this.allFieldsDOM.findIndex((fieldDOM) => fieldDOM == formField),
       1,
     )
+
+    //reset fieldOrder from DOM and from the fields state
+
+    this.allFields.forEach((field, i) => {
+
+        field.fieldOrder = i + 1
+
+        this.allFieldsDOM[i].querySelector('.input-nr').textContent = i + 1 + '.'
+
+
+    });
+
   }
 
   _addEditEvent(createdField) {

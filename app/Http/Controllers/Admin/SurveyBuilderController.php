@@ -74,7 +74,6 @@ class SurveyBuilderController extends Controller
     public function getSurveyBuilder(Request $request)
     {
         $overlaping = false;
-        $urlPath = $request->path();
         $user_id = Auth::user()->id;
         $session_id = Session::getId();
         $surveyPath = '' . $request->dim_id . $request->dep_id . $request->cat_id;
@@ -99,6 +98,10 @@ class SurveyBuilderController extends Controller
         }
 
         if ($overlaping) {
+
+            Session::forget('survey_result');
+
+
             return response()->json([
                 'status' => 'pending',
                 'message' => 'Work in progress!'
