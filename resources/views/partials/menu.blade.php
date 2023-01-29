@@ -18,11 +18,15 @@
         @can('user_management_access')
             <li class="c-sidebar-nav-dropdown {{ request()->is("admin/permissions*") ? "c-show" : "" }} {{ request()->is("admin/roles*") ? "c-show" : "" }} {{ request()->is("admin/users*") ? "c-show" : "" }}">
                 <a class="c-sidebar-nav-dropdown-toggle" href="#">
-                    <i class="fa-fw fas fa-users c-sidebar-nav-icon">
+                    <i class="fa-fw fas fa-users c-sidebar-nav-icon"></i>
 
-                    </i>
                     {{ trans('cruds.userManagement.title') }}
+
+                    <i class="fa fa-angle-down drop-icon" aria-hidden="true"></i>
+
                 </a>
+
+                
                 <ul class="c-sidebar-nav-dropdown-items">
                     @can('permission_access')
                         <li class="c-sidebar-nav-item">
@@ -74,6 +78,9 @@
 
                     </i>
                     {{ trans('cruds.admin.title') }}
+                    
+                    <i class="fa fa-angle-down drop-icon" aria-hidden="true"></i>
+
                 </a>
                 <ul class="c-sidebar-nav-dropdown-items">
                     @can('departamente_access')
